@@ -1,0 +1,37 @@
+>>>Domain
+
+We have a big amount of data regarding the victories and podium positions of athletes in various sports, throughout the editions of the Olympic Games. We want to give meaning to that data by comparing some metrics in a way that makes sense to the human eye.
+
+
+>>>Dataset
+
+We collected a spreadsheet with thousands of entries, containing podium finishes of athletes in each olympic sport, and the country they represented, from the first olympic games in 1896 until 2008.
+The original chunk of data was obtained from a spreadsheet made available in an article by The Guardian.
+Article:
+http://www.theguardian.com/sport/datablog/2012/jun/25/olympic-medal-winner-list-data#data
+Data:
+https://docs.google.com/spreadsheets/d/1zeeZQzFoHE2j_ZrqDkVJK9eF7OH1yvg75c8S-aBcxaU/edit
+
+We may also relate the amount of medallists a country has to its population (only since 1960), using another spreadsheet on the World Bank website:
+http://data.worldbank.org/indicator/SP.POP.TOTL?page=6
+
+
+>>>Tasks to be supported
+
+1-Browse - show a list of the countries with the most gold medallists in total in 1896.
+
+2-Identify - show the country with the most medallists in Judo of all time.
+
+3-Locate - show the position of the country in the overall standings.
+
+
+>>>Example Questions
+
+1-What countries had the most gold medallists in the first games, in 1896?
+
+2-What country has the most medallists in Judo?
+
+3-What are the standings of the USSR in 1964?
+
+>>>Data Sample
+
