@@ -1,6 +1,6 @@
 >>>Domain
 
-We have a big amount of data regarding the victories and podium positions of athletes in various sports, throughout the editions of the Olympic Games. We want to give meaning to that data by comparing some metrics in a way that makes sense to the human eye.
+We have a big amount of data regarding the victories and podium positions of athletes in various sports, throughout the editions of the Olympic Games. We want to give that data some meaning that makes sense to the human eye, to learn things such what countries are best at certain sports and how they compare in general, throughout the ages.
 
 
 >>>Dataset
@@ -24,6 +24,9 @@ http://data.worldbank.org/indicator/SP.POP.TOTL?page=6
 
 3-Locate - show the position of the country in the overall standings.
 
+4-Explore – using the derivative variable nºmedallists/nºpopulation, show the list of countries with the highest coefficient.
+
+5-Compare – show the medals each country won.
 
 >>>Example Questions
 
@@ -32,6 +35,10 @@ http://data.worldbank.org/indicator/SP.POP.TOTL?page=6
 2-What country has the most medallists in Judo?
 
 3-What are the standings of the USSR in 1964?
+
+4–See the countries with the most medallists per capita.
+
+5-How do the USSR and Russia’s cumulative scores compare?
 
 >>>Data Sample
 
