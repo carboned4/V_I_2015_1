@@ -1,0 +1,5 @@
+um para o coeficiente medalhas per capita por cada ano
+dois por modalidade (total e cada ano)
+dois por país (total e cada ano)
+
+We have a table that represents a tree containing all the podium finishes of the countries since 1896 until 2008. It's organized first by edition, then by sport/discipline, then by gender and the event, and finally, the medallists come up.
