@@ -127,7 +127,7 @@
     <append>N</append>
     <add_to_result_filenames>Y</add_to_result_filenames>
     <file>
-      <name>C&#x3a;&#x5c;Users&#x5c;Admin&#x5c;Documents&#x5c;GitHub&#x5c;V_I_2015_1&#x5c;testes&#x5c;ioc iso3.xls</name>
+      <name>C&#x3a;&#x5c;Users&#x5c;Admin&#x5c;Documents&#x5c;GitHub&#x5c;V_I_2015_1&#x5c;testes&#x5c;ioc iso3 hope.xls</name>
       <extention>xls</extention>
       <do_not_open_newfile_init>N</do_not_open_newfile_init>
       <create_parent_folder>N</create_parent_folder>
@@ -353,7 +353,7 @@
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
-    <separator>,</separator>
+    <separator>&#x3b;</separator>
     <enclosure>&#x22;</enclosure>
     <header>Y</header>
     <buffer_size>50000</buffer_size>
