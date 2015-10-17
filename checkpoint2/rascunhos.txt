@@ -1,5 +1,15 @@
-um para o coeficiente medalhas per capita por cada ano
-dois por modalidade (total e cada ano)
-dois por país (total e cada ano)
+pergunta 1:
+em cada ano, contar para cada país o número de gold, silver, bronze e todas juntas.
 
-We have a table that represents a tree containing all the podium finishes of the countries since 1896 until 2008. It's organized first by edition, then by sport/discipline, then by gender and the event, and finally, the medallists come up.
+pergunta 2:
+para cada país, ter o total de medalhas para cada modalidade.
+
+pergunta 3:
+em cada ano, contar para cada país o número de gold, silver e bronze (igual à 1).
+
+pergunta 4:
+em cada ano, contar para cada país o número de todas as medalhas juntas (igual à 1).
+depois dividir esse total paísXano pela população em paísXano.
+
+pergunta 5:
+usar a tabela do total de medalhas para comparar valores.
