@@ -1,15 +1,21 @@
 pergunta 1:
 em cada ano, contar para cada país o número de gold, silver, bronze e todas juntas.
+vitorias por medalha ano
+(para o total usar: vitorias totais por ano)
 
 pergunta 2:
 para cada país, ter o total de medalhas para cada modalidade.
+vitorias totais por desporto
 
 pergunta 3:
 em cada ano, contar para cada país o número de gold, silver e bronze (igual à 1).
+vitorias por medalha ano
+(para o total usar: vitorias totais por ano por desporto)
 
 pergunta 4:
 em cada ano, contar para cada país o número de todas as medalhas juntas (igual à 1).
 depois dividir esse total paísXano pela população em paísXano.
+vitorias totais por ano
 
 pergunta 5:
 usar a tabela do total de medalhas para comparar valores.
