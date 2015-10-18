@@ -16,6 +16,7 @@ pergunta 4:
 em cada ano, contar para cada país o número de todas as medalhas juntas (igual à 1).
 depois dividir esse total paísXano pela população em paísXano.
 vitorias totais por ano
+tabela final: test coef 0.csv
 
 pergunta 5:
 usar a tabela do total de medalhas para comparar valores.
