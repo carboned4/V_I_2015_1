@@ -1,0 +1,8 @@
+google_coords
+
+summer olympics:
+> ioc country codes
+> all medalists
+> team events fixed
+
+sp pop totl indicator
