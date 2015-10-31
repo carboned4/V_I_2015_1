@@ -1,0 +1,16 @@
+metemos uma bola sobre cada país
+pronto, e como aparece aí o top, isso ordena pelo número de medalhas
+e se quiseres procurar, usa-se uma search box
+e o coeficiente seria semelhante, mas apenas ano a ano, num novo separador
+porque só tem dados desde 1960 e não para todos os países
+
+PERGUNTA 5
+Para 1960 (ou outro ano, ou total):
+USA azul, Russia vermelho (no topo)
+judo
+[___] 22
+[_________] 50
+natação
+[] 1
+[__] 3
+usando a tabela vitorias totais por ano por desporto.csv
