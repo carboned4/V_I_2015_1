@@ -1,0 +1,15 @@
+anz
+bwi
+YUG
+BOH
+TCH
+ZZX
+EUA
+GDR
+FRG
+ROU (atenção, substituir o ROM e ROU das outras tabelas e meter por ROU)
+EUN
+URS
+IOP
+RU1
+SCG
