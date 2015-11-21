@@ -6,11 +6,19 @@ https://github.com/mbostock/d3/wiki/Arrays
 mercator:
 https://gist.github.com/patricksurry/6621971
 https://github.com/mbostock/d3/blob/master/src/geo/mercator.js
+http://stackoverflow.com/questions/20020895/insert-background-image-as-a-d3js-object
+http://stackoverflow.com/questions/11566935/how-to-access-data-of-a-d3-svg-element
+http://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object
+http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
+https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
 var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year_min, year_max;
+
+var merc;
+var projection;
 
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
@@ -25,6 +33,7 @@ d3.csv("medals_test1.csv", function (data) {
     shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	gen_map();
 })
 
 
@@ -73,6 +82,7 @@ function gen_bars() {
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
+		.attr("id",function(d) { return "bar "+d.NOC;})
 	    .append("title")
 		.text(function(d) { return d.NOC;});	//country identifier
 	
@@ -89,7 +99,9 @@ function gen_bars() {
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
-	    .attr("x", 0);
+	    .attr("x", 0)
+		.append("title")
+		.text(function(d) { return d.NOC;});	//country identifier
 		
 	//exit?
 
@@ -145,6 +157,10 @@ function gen_bars() {
 	*/
 }
 
+merc = d3.geo.mercator().center([0,0]).scale(900);
+	projection = d3.geo.path().projection(merc);
+    
+
 function gen_bubbles() {
 	
 	var w = 800;
@@ -155,22 +171,24 @@ function gen_bubbles() {
 	var bar_stroke_thickness = 1;
 	var bar_shift_right = 200;
 	var medal_label_shift_right = 20;
-	var max_radius = 200;
+	var max_radius = 10;
 	var min_amount_for_label = 10;
-	/*
-	var merc = d3.geo.mercator().scale(8500).translate[0,-1200];
-	var projection = d3.geo.projection(merc);
-*/    
+	var radius_for_zero = 0.5
+	
+	
 	
     var svg = d3.select("#bubble_map")
                 .append("svg")
                 .attr("width",w)
                 .attr("height",h);
-
-    var radiusscale = d3.scale.linear()
-                         .domain([0,200])
+	
+	
+	
+    var radiusscale = d3.scale.log()
+						.domain([radius_for_zero*0.9,d3.max(shown_dataset,function(d){
+							return d.numberBronze;})])
                          .range([0,max_radius]);
-
+	
     var yscale = d3.scale.linear()
                          .domain([-90,90])
                          .range([h,0]);
@@ -189,10 +207,11 @@ function gen_bubbles() {
 		
 	var bubbles_enter = bubbles.enter().append("g");
        
-	//make the bars
+	//make the bubbles
 	bubbles_enter.append("circle")
 	    .attr("r",function(d) {
-                          return radiusscale(d.numberBronze); //medals shown
+                          if(!d.numberBronze) return radiusscale(radius_for_zero);
+						  return radiusscale(d.numberBronze); //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
 	    .attr("cy",function(d) {
@@ -202,10 +221,12 @@ function gen_bubbles() {
                           return xscale(d.longitude);
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
+		.attr("id",function(d) { return "bubble "+d.NOC;})
 	    .append("title")
 		.text(function(d)
-			{ return d.NOC + " - " + d.numberBronze + " medals\n"+d.country_name;}
-		);	//country identifier
+			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
+				return d.NOC + " - " + d.numberBronze + " medals\n"+d.country_name;}
+		);
 	
 	//make the medal number label
 	bubbles_enter.append("text").text(function(d) {
@@ -216,8 +237,9 @@ function gen_bubbles() {
                           return yscale(d.latitude)+5;
 	                   })
 	    .attr("x", function(d) {
-                          return xscale(d.longitude)-5;
-	                   });
+                          return xscale(d.longitude)-10;
+	                   })
+		.attr("fill","white");
 	
 	
 	//exit?
