@@ -15,22 +15,17 @@
   <body onload="startupscript()" >
     <h1>Coefficient</h1>
 	<div id="fieldinput">
-		<div id="sportschoices">
-		</div>
 		
-		<div id="medalschoices">
-			<input type="checkbox" name="numberGold" value="numberGold">Gold</input>
-			<input type="checkbox" name="numberSilver" value="numberSilver">Silver</input>
-			<input checked type="checkbox" name="numberBronze" value="numberBronze">Bronze</input>
-		</div>
 		<div id="divfor2slider">
-			<p for="amount">Years:</label>
-			<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
-			<div id="slider-range"></div>
+			<form>
+				<span>Year:</span>
+				<span id="yearelementtowrite" ></span><br>
+				<input type="range" onchange="changeYear()" name="points" id="singleyearslider" min="0" max="12">
+			</form>
 		</div>
 		
 	</div>
-	<br><hr/>
+	<hr/>
 	<div id="bubble_map"></div>
 	<div id="bar_chart"></div>
   </body>

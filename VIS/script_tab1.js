@@ -93,7 +93,7 @@ function gen_bars() {
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
-                .attr("height",1000);
+                .attr("height",shown_dataset.length*(between_bars+bar_thickness));
 	
     var hscale = d3.scale.linear()
                          .domain([0,d3.max(shown_dataset,function(d){
@@ -154,39 +154,6 @@ function gen_bars() {
 
 	
 }
-/*
-function gen_map(){
-	var width = 1000,
-    var height = 500;
-
-	var projection = d3.geo.mercator()
-	.center([0,0])
-	.scale(100);
-
-	var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-var path = d3.geo.path()
-    .projection(projection);
-
-var g = svg.append("g");
-
-// load and display the World
-d3.json("topojson.v0.min.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
-    .enter()
-      .append("path")
-      .attr("d", path)
-});
-
-svg.call(zoom)
-
-	
-}
-*/
 
 var zoom_multiplier = 1;
 function gen_bubbles() {

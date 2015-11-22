@@ -39,6 +39,12 @@ p{
    font-size: 12pt;
 }
 
+span{
+	font-family: calibri, sans serif;
+   font-size: 12pt;
+}
+}
+
 #divfor2slider{
 	width: 500px;
 }
