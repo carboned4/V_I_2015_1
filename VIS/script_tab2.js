@@ -13,20 +13,14 @@ http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
-var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
+var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year_min, year_max;
 
 var merc;
 var projection;
 var country1="asas";
-(function asas(){
-        $("#country1").keyup(function(){
-           country1 =document.getElementById('country1').value;
-        });
-    })
-
-
+var country2= "Lol";
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	var return_dataset = data_in.sort(function(a, b){
@@ -35,16 +29,27 @@ function process_data(data_in){
 	return return_dataset;
 }
 
+
+function process_chosenData(data_in){
+	var return_dataset = data_in.filter(function(pais){
+		return (pais.country_name == country1 || pais.country_name == country2);
+		
+	});
+	return return_dataset;
+}
+
 d3.csv("medals_test1.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
-	gen_bars();
+	
+
 	gen_bubbles();
 	//gen_map();
 })
 
 
 function gen_bars() {
+chosen_dataset = process_chosenData (shown_dataset);
     var w = 800;
     //var h = 400;
 	var bar_thickness = 20;
@@ -66,8 +71,8 @@ function gen_bars() {
                          .range([0,w]);
 
     var yscale = d3.scale.linear()
-                         .domain([0,shown_dataset.length])
-                         .range([0,shown_dataset.length*(bar_thickness+between_bars)]);
+                         .domain([0,chosen_dataset.length])
+                         .range([0,chosen_dataset.length*(bar_thickness+between_bars)]);
 
     
 
@@ -77,11 +82,15 @@ function gen_bars() {
 	/*
 	parte em que se desenha as bubbles
 	*/
-    var bars = svg.selectAll("g")
-		.data(shown_dataset);
+	
+			
+	    var bars = svg.selectAll("g")
+		.data(chosen_dataset);
 		
-	var bars_enter = bars.enter().append("g");
-       
+		var bars_enter = bars.enter().append("g");
+		bars.selectAll("*").remove();
+   
+   
 	//make the bars
 	bars_enter.append("rect").attr("height",bar_thickness)
 	    .attr("width",function(d) {
@@ -92,6 +101,7 @@ function gen_bars() {
 	    .attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
+		.attr("asas", function() {console.log(chosen_dataset.length);})
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar "+d.NOC;})
@@ -120,42 +130,10 @@ function gen_bars() {
 		
 		
 	//exit?
-
+    bars.exit().remove();
 	
 }
-/*
-function gen_map(){
-	var width = 1000,
-    var height = 500;
 
-	var projection = d3.geo.mercator()
-	.center([0,0])
-	.scale(100);
-
-	var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-var path = d3.geo.path()
-    .projection(projection);
-
-var g = svg.append("g");
-
-// load and display the World
-d3.json("topojson.v0.min.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
-    .enter()
-      .append("path")
-      .attr("d", path)
-});
-
-svg.call(zoom)
-
-	
-}
-*/
 
 var zoom_multiplier = 1;
 function gen_bubbles() {
@@ -218,7 +196,7 @@ function gen_bubbles() {
 	*/
     var bubbles = svg.selectAll("s")
 		.data(shown_dataset);
-		
+	
 	var bubbles_enter = bubbles.enter().append("g");
 	   	var toggleColor = (function(){
 		var currentColor = "rgb(0,150,255)";
@@ -258,14 +236,19 @@ d3.selectAll("input").on("change", transition);
 
    // now depending selection, draw a colored rectangle.
 function transition() {
+country1=document.getElementById('country1').value;
+country2=document.getElementById('country2').value;
+
+	gen_bars();
+   bubbles.selectAll("*").remove();
    bubbles_enter.append("circle")
 	    .attr("r",function(d) {
                           if(!d.numberBronze) return radiusscale(radius_for_zero);
 						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
 	                   })
-	    .style("fill",function(d){if(d.country_name==document.getElementById('country1').value)
+	    .style("fill",function(d){if(d.country_name==country1)
 									return "red";
-									else if(d.country_name==document.getElementById('country2').value)
+									else if(d.country_name==country2)
 									return "green";
 									else return "rgb(0,150,255)";
 		
