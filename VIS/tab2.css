@@ -39,6 +39,39 @@ p{
    font-size: 12pt;
 }
 
+#divfor2slider{
+	width: 500px;
+}
+
+#bubble_map{
+	background: #ddeeff;
+	width: 600px;
+	display: table-row;
+	float:left;
+}
+
+#bar_chart{
+	border-left: 20px solid;
+	border-color: rgba(0, 0, 0, 0);
+	width: 600px;
+	height: 600px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#sportschoices{
+	display: table-row;
+	float:left;
+}
+
+#medalschoices{
+	display: table-row;
+}
+
+#fieldinput{
+	width:100%;
+}
+
 #old {
 	background-color: red;
 }
