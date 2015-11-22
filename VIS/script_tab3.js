@@ -146,6 +146,7 @@ svg.call(zoom)
 }
 */
 
+var zoom_multiplier = 1;
 function gen_bubbles() {
 	
 	var w = 800;
@@ -212,14 +213,14 @@ function gen_bubbles() {
 	bubbles_enter.append("circle")
 	    .attr("r",function(d) {
                           if(!d.numberBronze) return radiusscale(radius_for_zero);
-						  return radiusscale(d.numberBronze); //medals shown
+						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
 	    .attr("cy",function(d) {
-                          return yscale(d.latitude);
+                          return projection([d.longitude,d.latitude])[1];
 	                   })
 	    .attr("cx",function(d) {
-                          return xscale(d.longitude);
+                          return projection([d.longitude, d.latitude])[0];
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bubble "+d.NOC;})
@@ -235,23 +236,49 @@ function gen_bubbles() {
 						return d.numberBronze;
 		})
 		.attr("y",function(d) {
-                          return yscale(d.latitude)+5;
+                          return projection([d.longitude, d.latitude+1])[1];
 	                   })
 	    .attr("x", function(d) {
-                          return xscale(d.longitude)-10;
+                          return projection([d.longitude-2.5, d.latitude])[0];
 	                   })
 		.attr("fill","white");
+	bubbles.exit().remove();
 	
 	var zoom = d3.behavior.zoom()
     .on("zoom",function() {
+		var toApply = (zoom_multiplier == d3.event.scale ? 1 : d3.event.scale/zoom_multiplier); 
+		zoom_multiplier = d3.event.scale;
+		console.log(zoom_multiplier);
         g.attr("transform","translate("+ 
             d3.event.translate.join(",")+")scale("+d3.event.scale+")");
         g.selectAll("circle")
             .attr("d", path.projection(projection));
         g.selectAll("path")  
-            .attr("d", path.projection(projection)); 
-
-  });
+            .attr("d", path.projection(projection));
+		bubbles_enter.attr("transform","translate("+ 
+            d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+		bubbles_enter.selectAll("circle")
+            .attr("d", path.projection(projection))
+			.attr("r", function(){
+				return d3.select(this).attr("r")/toApply;
+			})
+			.attr("stroke-width", function(){
+				return d3.select(this).attr("stroke-width")/toApply;
+			});
+		bubbles_enter.selectAll("text")
+            .attr("d", path.projection(projection))
+			.style("font-size", function(){
+				return parseFloat(d3.select(this).style("font-size"))/toApply;
+			})/*
+			.attr("y", function(d) {
+				
+				return projection([d.longitude, d.latitude+1-1/toApply])[1];
+	                   })
+			.attr("x", function(d) {
+				
+				return projection([d.longitude-2.5+2.5/toApply, d.latitude])[0];
+	                   })*/;
+	});
 	
 	
 	//exit?
