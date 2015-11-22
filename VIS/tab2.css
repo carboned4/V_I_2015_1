@@ -15,12 +15,28 @@ h1 {
    font-size: 10pt;
 }
 
+path {
+  stroke: white;
+  stroke-width: 0.25px;
+  fill: grey;
+}
+
 .btn {
 	width: 100px;
 	font-family: calibri, sans serif;
 	padding: 10px;
 	border: solid 1px black;
 	color: white;
+}
+
+text{
+   font-family: calibri, sans serif;
+   font-size: 14;
+}
+
+p{
+   font-family: calibri, sans serif;
+   font-size: 12pt;
 }
 
 #old {
