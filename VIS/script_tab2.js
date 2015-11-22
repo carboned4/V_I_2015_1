@@ -21,6 +21,48 @@ var merc;
 var projection;
 var country1="asas";
 var country2= "Lol";
+
+var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminton",
+"Baseball", "Basketball", "Basque Pelota", "Boxing", "Canoe / Kayak", "Cricket",
+"Croquet", "Cycling", "Equestrian", "Fencing", "Football", "Golf", "Gymnastics",
+"Handball", "Hockey", "Ice Hockey", "Jeu de paume", "Judo", "Lacrosse",
+"Modern Pentathlon", "Polo", "Rackets", "Roque", "Rowing", "Rugby", "Sailing",
+"Shooting", "Skating", "Softball", "Table Tennis", "Taekwondo", "Tennis", "Triathlon",
+"Tug of War", "Volleyball", "Water Motorsports", "Weightlifting", "Wrestling"];
+
+var sportsChoicesElement;
+var sportsSelectElement;
+function createSportsDropdown(){
+	sportsChoicesElement = document.getElementById("sportschoices");
+	sportsSelectElement = sportsChoicesElement.appendChild(document.createElement("select"));
+	var kindofsport;
+	for(kindofsport in sportsChoices){
+		var child = document.createElement("option");
+		child.innerHTML = sportsChoices[kindofsport];
+		child.value = sportsChoices[kindofsport];
+		if(child.value == "Aquatics") child.selected= true;
+		sportsSelectElement.appendChild(child);
+	}
+}
+
+$(function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 1896,
+      max: 2008,
+      values: [ 2008, 2008 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val(ui.values[ 0 ] + " - "+ ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+  });
+
+function startupscript(){
+	createSportsDropdown();
+}
+
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	var return_dataset = data_in.sort(function(a, b){
@@ -42,7 +84,6 @@ d3.csv("medals_test1.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
 	
-
 	gen_bubbles();
 	//gen_map();
 })
@@ -139,8 +180,8 @@ var zoom_multiplier = 1;
 function gen_bubbles() {
 	
 	
-	var w = 800;
-    var h = 400;
+	var w = 600;
+    var h = 300;
 	var bar_thickness = 20;
     var padding=30;
 	var between_bars = 10;
@@ -153,6 +194,7 @@ function gen_bubbles() {
 	
 	var projection = d3.geo.mercator()
 		.center([0,0])
+		.translate([280,180])
 		.scale(100);
 	var path = d3.geo.path()
 		.projection(projection);

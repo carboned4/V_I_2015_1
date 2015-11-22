@@ -98,7 +98,7 @@ function gen_bars() {
     var hscale = d3.scale.linear()
                          .domain([0,d3.max(shown_dataset,function(d){
 							return d.numberBronze;})])
-                         .range([0,40/*w-medal_label_shift_right-40*/]);
+                         .range([0,60/*w-medal_label_shift_right-40*/]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
