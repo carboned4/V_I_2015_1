@@ -20,6 +20,47 @@ var year_min, year_max;
 var merc;
 var projection;
 
+var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminton",
+"Baseball", "Basketball", "Basque Pelota", "Boxing", "Canoe / Kayak", "Cricket",
+"Croquet", "Cycling", "Equestrian", "Fencing", "Football", "Golf", "Gymnastics",
+"Handball", "Hockey", "Ice Hockey", "Jeu de paume", "Judo", "Lacrosse",
+"Modern Pentathlon", "Polo", "Rackets", "Roque", "Rowing", "Rugby", "Sailing",
+"Shooting", "Skating", "Softball", "Table Tennis", "Taekwondo", "Tennis", "Triathlon",
+"Tug of War", "Volleyball", "Water Motorsports", "Weightlifting", "Wrestling"];
+
+var sportsChoicesElement;
+var sportsSelectElement;
+function createSportsDropdown(){
+	sportsChoicesElement = document.getElementById("sportschoices");
+	sportsSelectElement = sportsChoicesElement.appendChild(document.createElement("select"));
+	var kindofsport;
+	for(kindofsport in sportsChoices){
+		var child = document.createElement("option");
+		child.innerHTML = sportsChoices[kindofsport];
+		child.value = sportsChoices[kindofsport];
+		if(child.value == "Aquatics") child.selected= true;
+		sportsSelectElement.appendChild(child);
+	}
+}
+
+$(function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 1896,
+      max: 2008,
+      values: [ 2008, 2008 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val(ui.values[ 0 ] + " - "+ ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+  });
+
+function startupscript(){
+	createSportsDropdown();
+}
+	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	var return_dataset = data_in.sort(function(a, b){
@@ -33,12 +74,12 @@ d3.csv("medals_test1.csv", function (data) {
     shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
-	gen_map();
+	//gen_map();
 })
 
 
 function gen_bars() {
-    var w = 800;
+    var w = 600;
     //var h = 400;
 	var bar_thickness = 20;
     var padding=30;
@@ -46,24 +87,30 @@ function gen_bars() {
 	var bar_stroke_thickness = 2;
 	var bar_shift_right = 200;
 	var medal_label_shift_right = 20;
-	
+
+
+		
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
                 .attr("height",1000);
-
+	
     var hscale = d3.scale.linear()
-                         .domain([0,200])
-                         .range([0,w]);
+                         .domain([0,d3.max(shown_dataset,function(d){
+							return d.numberBronze;})])
+                         .range([0,40/*w-medal_label_shift_right-40*/]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
                          .range([0,shown_dataset.length*(bar_thickness+between_bars)]);
 
-    var bar_w = Math.floor((w-padding*2)/shown_dataset.length)-1;
+    
 
+	
+
+	
 	/*
-	parte em que se desenha
+	parte em que se desenha as bubbles
 	*/
     var bars = svg.selectAll("g")
 		.data(shown_dataset);
@@ -105,66 +152,47 @@ function gen_bars() {
 		
 	//exit?
 
-	/*
-	var yaxis = d3.svg.axis()
-	                  .scale(hscale)
-	                  .orient("left");	                  
-	*/
 	
-	/*
-	svg.append("g")	
-	   .attr("transform","translate(30,0)")
-	   .attr("class","axis")
-	   .call(yaxis);	   
-	*/
-	
-	/*
-	var xaxis = d3.svg.axis()
-	                  .scale(d3.scale.linear()
-	                  	             .domain([dataset[0].oscar_year,dataset[dataset.length-1].oscar_year])
-	                  	             .range([padding+bar_w/2,w-padding-bar_w/2]))
-	                  .tickFormat(d3.format("f"))
-	                  .ticks(dataset.length/2)
-	                  .orient("bottom");
-	*/
-	
-	/*
-	d3.selectAll("#old")
-	  .on("click", function() {
-	  	  dataset = full_dataset.slice(35,70);
-	  	  bar_w = Math.floor((w-padding*2)/dataset.length)-1;
-
-	  	  svg.selectAll("rect")
-	  	     .data(dataset)
-	  	     .attr("height",function(d) {
-                          return h-padding-hscale(d.rating);
-	                   })
-	         .attr("fill","red")
-	     	 .attr("y",function(d) {
-	     	              return hscale(d.rating);
-	                   })
-	         .select("title")
-	            .text(function(d) { return d.title;});
-
-		  xaxis.scale(d3.scale.linear()
-	                   .domain([dataset[0].oscar_year,dataset[dataset.length-1].oscar_year])
-	                   .range([padding+bar_w/2,w-padding-bar_w/2]));
-
-         d3.select(".x.axis")           
-	       .call(xaxis);	
-
-	   });
-	*/
 }
+/*
+function gen_map(){
+	var width = 1000,
+    var height = 500;
 
-merc = d3.geo.mercator().center([0,0]).scale(900);
-	projection = d3.geo.path().projection(merc);
-    
+	var projection = d3.geo.mercator()
+	.center([0,0])
+	.scale(100);
 
+	var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var g = svg.append("g");
+
+// load and display the World
+d3.json("topojson.v0.min.json", function(error, topology) {
+    g.selectAll("path")
+      .data(topojson.object(topology, topology.objects.countries)
+          .geometries)
+    .enter()
+      .append("path")
+      .attr("d", path)
+});
+
+svg.call(zoom)
+
+	
+}
+*/
+
+var zoom_multiplier = 1;
 function gen_bubbles() {
 	
-	var w = 800;
-    var h = 400;
+	var w = 600;
+    var h = 300;
 	var bar_thickness = 20;
     var padding=30;
 	var between_bars = 10;
@@ -175,7 +203,13 @@ function gen_bubbles() {
 	var min_amount_for_label = 10;
 	var radius_for_zero = 0.5
 	
-	
+	var projection = d3.geo.mercator()
+		.center([0,0])
+		.translate([280,180])
+		.scale(100);
+	var path = d3.geo.path()
+		.projection(projection);
+
 	
     var svg = d3.select("#bubble_map")
                 .append("svg")
@@ -197,12 +231,22 @@ function gen_bubbles() {
                          .domain([-180,180])
                          .range([0,w]);
 	
-    var bar_w = Math.floor((w-padding*2)/shown_dataset.length)-1;
-
+	
+	var g = svg.append("g");
+	// load and display the World
+	d3.json("topojson.v0.min.json", function(error, topology) {
+    g.selectAll("path")
+      .data(topojson.object(topology, topology.objects.countries)
+          .geometries)
+    .enter()
+      .append("path")
+      .attr("d", path)
+	});
+	
 	/*
 	parte em que se desenha
 	*/
-    var bubbles = svg.selectAll("g")
+	var bubbles = svg.selectAll("g.hack") //remove the first g element (map)
 		.data(shown_dataset);
 		
 	var bubbles_enter = bubbles.enter().append("g");
@@ -211,14 +255,14 @@ function gen_bubbles() {
 	bubbles_enter.append("circle")
 	    .attr("r",function(d) {
                           if(!d.numberBronze) return radiusscale(radius_for_zero);
-						  return radiusscale(d.numberBronze); //medals shown
+						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
 	    .attr("cy",function(d) {
-                          return yscale(d.latitude);
+                          return projection([d.longitude,d.latitude])[1];
 	                   })
 	    .attr("cx",function(d) {
-                          return xscale(d.longitude);
+                          return projection([d.longitude, d.latitude])[0];
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bubble "+d.NOC;})
@@ -234,64 +278,53 @@ function gen_bubbles() {
 						return d.numberBronze;
 		})
 		.attr("y",function(d) {
-                          return yscale(d.latitude)+5;
+                          return projection([d.longitude, d.latitude+1])[1];
 	                   })
 	    .attr("x", function(d) {
-                          return xscale(d.longitude)-10;
+                          return projection([d.longitude-2.5, d.latitude])[0];
 	                   })
 		.attr("fill","white");
+	bubbles.exit().remove();
+	
+	var zoom = d3.behavior.zoom()
+    .on("zoom",function() {
+		var toApply = (zoom_multiplier == d3.event.scale ? 1 : d3.event.scale/zoom_multiplier); 
+		zoom_multiplier = d3.event.scale;
+		console.log(zoom_multiplier);
+        g.attr("transform","translate("+ 
+            d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+        g.selectAll("circle")
+            .attr("d", path.projection(projection));
+        g.selectAll("path")  
+            .attr("d", path.projection(projection));
+		bubbles_enter.attr("transform","translate("+ 
+            d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+		bubbles_enter.selectAll("circle")
+            .attr("d", path.projection(projection))
+			.attr("r", function(){
+				return d3.select(this).attr("r")/toApply;
+			})
+			.attr("stroke-width", function(){
+				return d3.select(this).attr("stroke-width")/toApply;
+			});
+		bubbles_enter.selectAll("text")
+            .attr("d", path.projection(projection))
+			.style("font-size", function(){
+				return parseFloat(d3.select(this).style("font-size"))/toApply;
+			})/*
+			.attr("y", function(d) {
+				
+				return projection([d.longitude, d.latitude+1-1/toApply])[1];
+	                   })
+			.attr("x", function(d) {
+				
+				return projection([d.longitude-2.5+2.5/toApply, d.latitude])[0];
+	                   })*/;
+	});
 	
 	
 	//exit?
-
-	/*
-	var yaxis = d3.svg.axis()
-	                  .scale(hscale)
-	                  .orient("left");	                  
-	*/
+	svg.call(zoom);
 	
-	/*
-	svg.append("g")	
-	   .attr("transform","translate(30,0)")
-	   .attr("class","axis")
-	   .call(yaxis);	   
-	*/
 	
-	/*
-	var xaxis = d3.svg.axis()
-	                  .scale(d3.scale.linear()
-	                  	             .domain([dataset[0].oscar_year,dataset[dataset.length-1].oscar_year])
-	                  	             .range([padding+bar_w/2,w-padding-bar_w/2]))
-	                  .tickFormat(d3.format("f"))
-	                  .ticks(dataset.length/2)
-	                  .orient("bottom");
-	*/
-	
-	/*
-	d3.selectAll("#old")
-	  .on("click", function() {
-	  	  dataset = full_dataset.slice(35,70);
-	  	  bar_w = Math.floor((w-padding*2)/dataset.length)-1;
-
-	  	  svg.selectAll("rect")
-	  	     .data(dataset)
-	  	     .attr("height",function(d) {
-                          return h-padding-hscale(d.rating);
-	                   })
-	         .attr("fill","red")
-	     	 .attr("y",function(d) {
-	     	              return hscale(d.rating);
-	                   })
-	         .select("title")
-	            .text(function(d) { return d.title;});
-
-		  xaxis.scale(d3.scale.linear()
-	                   .domain([dataset[0].oscar_year,dataset[dataset.length-1].oscar_year])
-	                   .range([padding+bar_w/2,w-padding-bar_w/2]));
-
-         d3.select(".x.axis")           
-	       .call(xaxis);	
-
-	   });
-	*/
 }

@@ -1,19 +1,39 @@
 <html>
 
   <head>
-   <title>G01 - Standings</title>
-   <link rel="stylesheet" href="tab1.css">   
-   <script src="d3.v3.min.js" charset="utf-8"></script>
-   <script src="script_tab1.js"></script>
-   <script src="http://d3js.org/topojson.v1.min.js"></script>
+   <title>G01 - Coefficient</title>
+   <link rel="stylesheet" href="tab3.css">   
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+   <script src="http://d3js.org/d3.v3.min.js"></script>
+   <script src="http://d3js.org/topojson.v0.min.js"></script>
+   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+   <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+   <script src="script_tab3.js"></script>
+   
   </head>
 
-  <body>
-    <h1>Standings</h1>
-	<p>2008</p>
-	<p>Aquatics</p>
-    <div id="bubble_map"></div>
-	<hr/>
+  <body onload="startupscript()" >
+    <h1>Coefficient</h1>
+	<div id="fieldinput">
+		<div id="sportschoices">
+		</div>
+		
+		<div id="medalschoices">
+			<br>
+			<input type="checkbox" name="numberGold" value="numberGold">Gold</input>
+			<input type="checkbox" name="numberSilver" value="numberSilver">Silver</input>
+			<input checked type="checkbox" name="numberBronze" value="numberBronze">Bronze</input>
+		</div>
+		<div id="divfor2slider">
+			<p for="amount">Years:</label>
+			<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+			<div id="slider-range"></div>
+		</div>
+		
+	</div>
+	<br><hr/>
+	<div id="bubble_map"></div>
+	<br><hr/>
 	<div id="bar_chart"></div>
   </body>
 
