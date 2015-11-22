@@ -20,6 +20,47 @@ var year_min, year_max;
 var merc;
 var projection;
 
+var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminton",
+"Baseball", "Basketball", "Basque Pelota", "Boxing", "Canoe / Kayak", "Cricket",
+"Croquet", "Cycling", "Equestrian", "Fencing", "Football", "Golf", "Gymnastics",
+"Handball", "Hockey", "Ice Hockey", "Jeu de paume", "Judo", "Lacrosse",
+"Modern Pentathlon", "Polo", "Rackets", "Roque", "Rowing", "Rugby", "Sailing",
+"Shooting", "Skating", "Softball", "Table Tennis", "Taekwondo", "Tennis", "Triathlon",
+"Tug of War", "Volleyball", "Water Motorsports", "Weightlifting", "Wrestling"];
+
+var sportsChoicesElement;
+var sportsSelectElement;
+function createSportsDropdown(){
+	sportsChoicesElement = document.getElementById("sportschoices");
+	sportsSelectElement = sportsChoicesElement.appendChild(document.createElement("select"));
+	var kindofsport;
+	for(kindofsport in sportsChoices){
+		var child = document.createElement("option");
+		child.innerHTML = sportsChoices[kindofsport];
+		child.value = sportsChoices[kindofsport];
+		if(child.value == "Aquatics") child.selected= true;
+		sportsSelectElement.appendChild(child);
+	}
+}
+
+$(function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 1896,
+      max: 2008,
+      values: [ 2008, 2008 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val(ui.values[ 0 ] + " - "+ ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+  });
+
+function startupscript(){
+	createSportsDropdown();
+}
+	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	var return_dataset = data_in.sort(function(a, b){
@@ -38,7 +79,7 @@ d3.csv("medals_test1.csv", function (data) {
 
 
 function gen_bars() {
-    var w = 800;
+    var w = 600;
     //var h = 400;
 	var bar_thickness = 20;
     var padding=30;
@@ -55,8 +96,9 @@ function gen_bars() {
                 .attr("height",1000);
 	
     var hscale = d3.scale.linear()
-                         .domain([0,200])
-                         .range([0,w]);
+                         .domain([0,d3.max(shown_dataset,function(d){
+							return d.numberBronze;})])
+                         .range([0,40/*w-medal_label_shift_right-40*/]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
@@ -149,8 +191,8 @@ svg.call(zoom)
 var zoom_multiplier = 1;
 function gen_bubbles() {
 	
-	var w = 800;
-    var h = 400;
+	var w = 600;
+    var h = 300;
 	var bar_thickness = 20;
     var padding=30;
 	var between_bars = 10;
@@ -163,6 +205,7 @@ function gen_bubbles() {
 	
 	var projection = d3.geo.mercator()
 		.center([0,0])
+		.translate([280,180])
 		.scale(100);
 	var path = d3.geo.path()
 		.projection(projection);
@@ -200,11 +243,10 @@ function gen_bubbles() {
       .attr("d", path)
 	});
 	
-	
 	/*
 	parte em que se desenha
 	*/
-    var bubbles = svg.selectAll("g")
+	var bubbles = svg.selectAll("g.hack") //remove the first g element (map)
 		.data(shown_dataset);
 		
 	var bubbles_enter = bubbles.enter().append("g");

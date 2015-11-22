@@ -39,6 +39,20 @@ p{
    font-size: 12pt;
 }
 
+#divfor2slider{
+	width: 50%;
+}
+
+#bubble_map{
+	background: #ddeeff;
+	width: 600px;
+}
+
+#bar_chart{
+	position: absolute;
+	width: 600px;
+}
+
 #old {
 	background-color: red;
 }
