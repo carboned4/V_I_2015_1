@@ -11,6 +11,14 @@ path {
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script>
+
+function process_data(data_in){
+	var return_dataset = data_in.sort(function(a, b){
+		return b.numberBronze - a.numberBronze;
+	});
+	return return_dataset;
+}
+
 var width = 1200;
     height = 550;
 
@@ -30,6 +38,9 @@ var g = svg.append("g");
 
 // load and display the World
 d3.json("topojson.v0.min.json", function(error, topology) {
+
+
+
     g.selectAll("path")
       .data(topojson.object(topology, topology.objects.countries)
           .geometries)
@@ -38,8 +49,18 @@ d3.json("topojson.v0.min.json", function(error, topology) {
       .attr("d", path)
 	  
 	  d3.csv("medals.csv", function(error, data) {
+	    var full_dataset=data;
+		var shown_dataset = process_data(full_dataset);
+		var radius_for_zero = 0.5
+		var max_radius = 10;
+		var radiusscale = d3.scale.log()
+						.domain([radius_for_zero*0.9,d3.max(shown_dataset,function(d){
+							return d.numberBronze+d.numberSilver+d.numberGold;})])
+                         .range([0,max_radius]);
+	    
+	  
         g.selectAll("circle")
-           .data(data)
+           .data(shown_dataset)
            .enter()
            .append("circle")
            .attr("cx", function(d) {
@@ -48,8 +69,12 @@ d3.json("topojson.v0.min.json", function(error, topology) {
            .attr("cy", function(d) {
                    return projection([d.longitude, d.latitude])[1];
            })
-           .attr("r", 5)
+            .attr("r",function(d) {
+                          if(!d.numberBronze) return radiusscale(radius_for_zero);
+							return radiusscale(d.numberBronze+d.numberSilver+d.numberGold)/2.5; //medals shown
+                    })
            .style("fill", "red");
+		   
 	});
 });
 
