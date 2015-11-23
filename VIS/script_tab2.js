@@ -48,15 +48,17 @@ function createSportsDropdown(){
 $(function() {
     $( "#slider-range" ).slider({
       range: true,
-      min: 1896,
-      max: 2008,
-      values: [ 2008, 2008 ],
+      min: 0,
+      max: 28,
+      values: [ 28, 28 ],
       slide: function( event, ui ) {
-        $( "#amount" ).val(ui.values[ 0 ] + " - "+ ui.values[ 1 ] );
+        $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
+		year_min = 1896+ui.values[0]*4;
+		year_max = 1896+ui.values[1]*4;
       }
     });
-    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
-      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+    $( "#amount" ).val(($( "#slider-range" ).slider( "values", 0 )*4+1896) +
+      " - " + ($( "#slider-range" ).slider( "values", 1 )*4+1896) );
   });
 
 function startupscript(){
@@ -101,11 +103,11 @@ chosen_dataset = process_chosenData (shown_dataset);
 	var medal_label_shift_right = 20;
 
 
-		
+	d3.select("#bar_chart").selectAll("svg").remove();
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
-                .attr("height",1000);
+                .attr("height",60);
 	
     var hscale = d3.scale.linear()
                          .domain([0,200])
@@ -123,7 +125,7 @@ chosen_dataset = process_chosenData (shown_dataset);
 	/*
 	parte em que se desenha as bubbles
 	*/
-	
+	var bars = svg.selectAll("g").remove();
 			
 	    var bars = svg.selectAll("g")
 		.data(chosen_dataset);

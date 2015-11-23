@@ -71,11 +71,10 @@ p{
 #fieldinput{
 	width:100%;
 }
-
-#old {
-	background-color: red;
+#country2{
+background-color:#f0D0D0;
 }
 
-#new {
-	background-color: purple;
+#country1{
+background-color:#D0F0D0;
 }

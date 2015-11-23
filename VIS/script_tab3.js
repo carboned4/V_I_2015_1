@@ -26,13 +26,17 @@ var projection;
 
 function changeYear(){
 	var yearel = document.getElementById("singleyearslider");
+	console.log(yearel.value);
 	year = 1960+yearel.value*4;
 	document.getElementById("yearelementtowrite").innerHTML	=year;
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
 }
 
 
 function startupscript(){
-	document.getElementById("singleyearslider").value=12;
+	document.getElementById("singleyearslider").value=1;
 	changeYear();
 }
 	
@@ -48,10 +52,10 @@ function process_data(data_in){
 }
 
 d3.csv("coef.csv", function (data) {
-    full_dataset = data;    
-    shown_dataset = process_data(full_dataset);
-	gen_bars();
-	gen_bubbles();
+    full_dataset = data;
+	startupscript();   
+	
+	
 	//gen_map();
 })
 
@@ -67,7 +71,7 @@ function gen_bars() {
 	var medal_label_shift_right = 20;
 
 
-		
+		d3.select("#bar_chart").selectAll("svg").remove();
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
@@ -97,6 +101,7 @@ function gen_bars() {
 	/*
 	parte em que se desenha as bubbles
 	*/
+	
     var bars = svg.selectAll("g")
 		.data(shown_dataset);
 		
@@ -118,12 +123,13 @@ function gen_bars() {
 		.attr("id",function(d) { return "bar_"+d.ioc_code;})
 	    .append("title")
 		.text(function(d) { return d.ioc_code;});	//country identifier
-	
+		
 	//make the medal number label
 	bars_enter.append("text").text(function(d) {if (!d["y"+year]) return 0; return d["y"+year];})
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
+					   .attr("lol", function () {console.log("y"+year);})
 	    .attr("x", function(d){
 							return bar_shift_right + bar_stroke_thickness/2 + hscale(d["y"+year]) + medal_label_shift_right});
 	
@@ -143,7 +149,7 @@ function gen_bars() {
 
 var zoom_multiplier = 1;
 function gen_bubbles() {
-	
+	zoom_multiplier=1;
 	var w = 600;
     var h = 300;
 	var bar_thickness = 20;
@@ -163,7 +169,7 @@ function gen_bubbles() {
 	var path = d3.geo.path()
 		.projection(projection);
 
-	
+	d3.select("#bubble_map").selectAll("svg").remove();
     var svg = d3.select("#bubble_map")
                 .append("svg")
                 .attr("width",w)
