@@ -129,7 +129,7 @@ chosen_dataset = process_chosenData (shown_dataset);
 		.data(chosen_dataset);
 		
 		var bars_enter = bars.enter().append("g");
-		bars.selectAll("*").remove();
+		
    
    
 	//make the bars
@@ -138,7 +138,12 @@ chosen_dataset = process_chosenData (shown_dataset);
 						if(!d.numberBronze) return hscale(0.5); //for a short bar
 						return hscale(d.numberBronze); //medals shown
 	                   })
-	    .attr("fill","rgb(0,150,255)")	     
+	    .attr("fill",function(d) { if(d.country_name==country1)
+									return "green";
+								   else if(d.country_name==country2)
+									return "red";
+									else return "rgb(0,150,255)";
+								})	     
 	    .attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
@@ -167,7 +172,7 @@ chosen_dataset = process_chosenData (shown_dataset);
 		.text(function(d) { return d.NOC;});	//country identifier
 		
 		
-		
+
 		
 		
 	//exit?
@@ -351,14 +356,16 @@ function getNOCforName(nametofind){
 }
 
 function transition() {
+var previousCountry1 = country1;
+var previousCountry2 = country2;
 country1=document.getElementById('country1').value;
 country2=document.getElementById('country2').value;
-console.log(country1);
-console.log(country2);
-	d3.select("#bar_"+getNOCforName(country1)).attr("fill","green");
-	d3.select("#bar_"+getNOCforName(country2)).attr("fill","red");
-	d3.select("#bubble_"+getNOCforName(country1)).attr("fill","green");
-	d3.select("#bubble_"+getNOCforName(country2)).attr("fill","red");
+	d3.select("#bubble_"+getNOCforName(previousCountry1)).style("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(previousCountry2)).style("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(country1)).style("fill","green");
+	d3.select("#bubble_"+getNOCforName(country2)).style("fill","red");
+	gen_bars();
+
 	return;
 	
 }
