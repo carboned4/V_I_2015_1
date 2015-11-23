@@ -65,23 +65,19 @@ function startupscript(){
 	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
-	var return_dataset = data_in.sort(function(a, b){
+	var unfiltered_data = data_in.filter(function(a){ //remove zeros do tiago
+		return a.numberBronze > 0;
+	});
+	var return_dataset = unfiltered_data.sort(function(a, b){
 		return b.numberBronze - a.numberBronze;
 	});
 	return return_dataset;
 }
 
-function remove_zeros(data_in){
-	var return_dataset = data_in.filter(function(pais){
-		return pais.numberBronze>0;
-		
-	});
-	return return_dataset;
-}
 
 d3.csv("medals_test1.csv", function (data) {
     full_dataset = data;    
-    shown_dataset = remove_zeros(process_data(full_dataset));
+    shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
 	//gen_map();
@@ -134,7 +130,8 @@ function gen_bars() {
 						return hscale(d.numberBronze); //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
-	    .attr("y",function(d, i) {
+	    .on("click", colorbubbles)
+		.attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
@@ -235,7 +232,8 @@ function gen_bubbles() {
 						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
-	    .attr("cy",function(d) {
+	    .on("click", colorbars)
+		.attr("cy",function(d) {
                           return projection([d.longitude,d.latitude])[1];
 	                   })
 	    .attr("cx",function(d) {
@@ -307,23 +305,66 @@ function getNOCforName(nametofind){
 	for(el in shown_dataset){
 		var possiblecountry = shown_dataset[el];
 		if(possiblecountry.country_name == nametofind){
-			return possiblecountry.NOC;
+			return possiblecountry.ioc_code;
 		}
 	}
 	return null;
 }
 
+function getNameforNOC(ioctofind){
+	for(el in shown_dataset){
+		var possiblecountry = shown_dataset[el];
+		if(possiblecountry.ioc_code == ioctofind){
+			return possiblecountry.country_name;
+		}
+	}
+	return null;
+}
 
-function colorbarandbubbles() {
-	var previousCountry = searchedCountry;
-	searchedCountry = document.getElementById("country").value;
-	console.log(searchedCountry);
-	
+function IdToId(barid){
+	return barid.split("_")[1];
+}
+
+var previousCountry = ""
+function colorbars(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
-	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	
+	var bartohighlight = d3.select(this).attr("id");
+	var bartohighlightID = IdToId(bartohighlight);
+	console.log(bartohighlight + " " + bartohighlightID);
+	previousCountry = getNameforNOC(bartohighlightID);
+	console.log(previousCountry);
+	d3.select("#bar_"+bartohighlightID).attr("fill","red");
+	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
+	return;
+}
+
+function colorbubbles(){
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	
+	var bubbletohighlight = d3.select(this).attr("id");
+	var bubbletohighlightID = IdToId(bubbletohighlight);
+	console.log(bubbletohighlight + " " + bubbletohighlightID);
+	previousCountry = getNameforNOC(bubbletohighlightID);
+	console.log(previousCountry);
+	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
+	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
+	return;
+}
+
+function colorbarandbubbles(){
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	console.log(previousCountry);
+	searchedCountry = document.getElementById("country").value;
+	previousCountry = searchedCountry;
+	console.log(previousCountry);
+	
+	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");
 
 		
 	return;
-} 
+}
