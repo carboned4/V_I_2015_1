@@ -104,7 +104,8 @@ function gen_bars() {
 						return hscale(d["y"+year]); //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
-	    .attr("y",function(d, i) {
+	    .on("click", colorbubbles)
+		.attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
@@ -293,15 +294,50 @@ function getNOCforName(nametofind){
 	return null;
 }
 
+function getNameforNOC(ioctofind){
+	for(el in shown_dataset){
+		var possiblecountry = shown_dataset[el];
+		if(possiblecountry.ioc_code == ioctofind){
+			return possiblecountry.country_name;
+		}
+	}
+	return null;
+}
+
+function IdToId(barid){
+	return barid.split("_")[1];
+}
+
+var previousCountry = "";
 function colorbars(){
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	
 	var bartohighlight = d3.select(this).attr("id");
-	console.log(bartohighlight);
+	var bartohighlightID = IdToId(bartohighlight);
+	console.log(bartohighlight + " " + bartohighlightID);
+	previousCountry = getNameforNOC(bartohighlightID);
+	console.log(previousCountry);
+	d3.select("#bar_"+bartohighlightID).attr("fill","red");
+	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
+}
+
+function colorbubbles(){
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	
+	var bubbletohighlight = d3.select(this).attr("id");
+	var bubbletohighlightID = IdToId(bubbletohighlight);
+	console.log(bubbletohighlight + " " + bubbletohighlightID);
+	previousCountry = getNameforNOC(bubbletohighlightID);
+	console.log(previousCountry);
+	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
+	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
 }
 
 function colorbarandbubbles() {
 	var previousCountry = searchedCountry;
 	searchedCountry = document.getElementById("country").value;
-	console.log(searchedCountry);
 	
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
