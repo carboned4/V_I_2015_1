@@ -320,6 +320,7 @@ function colorbars(){
 	console.log(previousCountry);
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
+	return;
 }
 
 function colorbubbles(){
@@ -333,15 +334,18 @@ function colorbubbles(){
 	console.log(previousCountry);
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
+	return;
 }
 
-function colorbarandbubbles() {
-	var previousCountry = searchedCountry;
-	searchedCountry = document.getElementById("country").value;
-	
+function colorbarandbubbles(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
-	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	console.log(previousCountry);
+	searchedCountry = document.getElementById("country").value;
+	previousCountry = searchedCountry;
+	console.log(previousCountry);
+	
+	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");
 
 		
