@@ -17,6 +17,8 @@ var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar
 
 var year_min, year_max;
 
+var searchedCountry = "";
+
 var merc;
 var projection;
 
@@ -129,7 +131,7 @@ function gen_bars() {
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bar "+d.NOC;})
+		.attr("id",function(d) { return "bar_"+d.NOC;})
 	    .append("title")
 		.text(function(d) { return d.NOC;});	//country identifier
 	
@@ -232,7 +234,7 @@ function gen_bubbles() {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bubble "+d.NOC;})
+		.attr("id",function(d) { return "bubble_"+d.NOC;})
 	    .append("title")
 		.text(function(d)
 			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
@@ -251,7 +253,6 @@ function gen_bubbles() {
                           return projection([d.longitude-2.5, d.latitude])[0];
 	                   })
 		.attr("fill","white");
-	bubbles.exit().remove();
 	
 	var zoom = d3.behavior.zoom()
     .on("zoom",function() {
@@ -289,9 +290,32 @@ function gen_bubbles() {
 	                   })*/;
 	});
 	
-	
-	//exit?
+	d3.select("#country").on("change", colorbarandbubbles);
 	svg.call(zoom);
 	
-	
 }
+
+function getNOCforName(nametofind){
+	for(el in shown_dataset){
+		var possiblecountry = shown_dataset[el];
+		if(possiblecountry.country_name == nametofind){
+			return possiblecountry.NOC;
+		}
+	}
+	return null;
+}
+
+
+function colorbarandbubbles() {
+	var previousCountry = searchedCountry;
+	searchedCountry = document.getElementById("country").value;
+	console.log(searchedCountry);
+	
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");
+
+		
+	return;
+} 

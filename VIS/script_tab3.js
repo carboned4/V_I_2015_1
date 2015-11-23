@@ -17,6 +17,8 @@ var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar
 
 var year = 2008;
 
+var searchedCountry = "";
+
 var merc;
 var projection;
 
@@ -107,7 +109,7 @@ function gen_bars() {
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bar "+d.ioc_code;})
+		.attr("id",function(d) { return "bar_"+d.ioc_code;})
 	    .append("title")
 		.text(function(d) { return d.ioc_code;});	//country identifier
 	
@@ -208,19 +210,21 @@ function gen_bubbles() {
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
-	    .attr("cy",function(d) {
+	    .on("click", colorbars)
+		.attr("cy",function(d) {
                           return projection([d.longitude,d.latitude])[1];
 	                   })
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bubble "+d.ioc_code;})
+		.attr("id",function(d) { return "bubble_"+d.ioc_code;})
 	    .append("title")
 		.text(function(d)
 			{   if(!d["y"+year]) return d.ioc_code + " - 0 million medals/person\n"+d.country_name;
 				return d.ioc_code + " - " + d["y"+year] + " million medals/person\n"+d.country_name;}
 		);
+		
 	
 	//make the medal number label
 	/*bubbles_enter.append("text").text(function(d) {
@@ -274,8 +278,36 @@ function gen_bubbles() {
 	});
 	
 	
-	//exit?
+	d3.select("#country").on("change", colorbarandbubbles);
 	svg.call(zoom);
 	
-	
 }
+
+function getNOCforName(nametofind){
+	for(el in shown_dataset){
+		var possiblecountry = shown_dataset[el];
+		if(possiblecountry.country_name == nametofind){
+			return possiblecountry.ioc_code;
+		}
+	}
+	return null;
+}
+
+function colorbars(){
+	var bartohighlight = d3.select(this).attr("id");
+	console.log(bartohighlight);
+}
+
+function colorbarandbubbles() {
+	var previousCountry = searchedCountry;
+	searchedCountry = document.getElementById("country").value;
+	console.log(searchedCountry);
+	
+	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
+	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
+	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");
+
+		
+	return;
+} 
