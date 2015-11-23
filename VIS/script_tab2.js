@@ -145,7 +145,7 @@ chosen_dataset = process_chosenData (shown_dataset);
 		.attr("asas", function() {console.log(chosen_dataset.length);})
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bar "+d.NOC;})
+		.attr("id",function(d) { return "bar_"+d.NOC;})
 	    .append("title")
 		.text(function(d) { return d.NOC;});	//country identifier
 	
@@ -264,7 +264,7 @@ function gen_bubbles() {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
 		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bubble "+d.NOC;})
+		.attr("id",function(d) { return "bubble_"+d.NOC;})
 	    .append("title")
 		.text(function(d)
 			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
@@ -273,56 +273,10 @@ function gen_bubbles() {
 		
 		
 		
-		 // Wait for input   
-d3.selectAll("input").on("change", transition);
+
 
    // now depending selection, draw a colored rectangle.
-function transition() {
-country1=document.getElementById('country1').value;
-country2=document.getElementById('country2').value;
 
-	gen_bars();
-   bubbles.selectAll("*").remove();
-   bubbles_enter.append("circle")
-	    .attr("r",function(d) {
-                          if(!d.numberBronze) return radiusscale(radius_for_zero);
-						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
-	                   })
-	    .style("fill",function(d){if(d.country_name==country1)
-									return "red";
-									else if(d.country_name==country2)
-									return "green";
-									else return "rgb(0,150,255)";
-		
-		})			
-	    .attr("cy",function(d) {
-                          return projection([d.longitude,d.latitude])[1];
-	                   })
-	    .attr("cx",function(d) {
-                          return projection([d.longitude, d.latitude])[0];
-	                   })
-		.attr("stroke-width",3).attr("stroke","black")
-		.attr("id",function(d) { return "bubble "+d.NOC;})
-	    .append("title")
-		.text(function(d)
-			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
-				return d.NOC + " - " + d.numberBronze + " medals\n"+d.country_name;}
-		);
-		bubbles_enter.append("text").text(function(d) {
-						if (d.numberBronze < min_amount_for_label) return "";
-						return d.numberBronze;
-		})
-		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude+1])[1];
-	                   })
-	    .attr("x", function(d) {
-                          return projection([d.longitude-2.5, d.latitude])[0];
-	                   })
-		.attr("fill","white");
-	
-}
-		
-		
 	
 	//make the medal number label
 	bubbles_enter.append("text").text(function(d) {
@@ -378,9 +332,34 @@ country2=document.getElementById('country2').value;
 	                   })*/;
 	});
 	
-	
+			 // Wait for input   
+d3.selectAll("input").on("change", transition);
 	//exit?
 	svg.call(zoom);
 	
 	
 }
+
+function getNOCforName(nametofind){
+	for(el in shown_dataset){
+		var possiblecountry = shown_dataset[el];
+		if(possiblecountry.country_name == nametofind){
+			return possiblecountry.NOC;
+		}
+	}
+	return null;
+}
+
+function transition() {
+country1=document.getElementById('country1').value;
+country2=document.getElementById('country2').value;
+console.log(country1);
+console.log(country2);
+	d3.select("#bar_"+getNOCforName(country1)).attr("fill","green");
+	d3.select("#bar_"+getNOCforName(country2)).attr("fill","red");
+	d3.select("#bubble_"+getNOCforName(country1)).attr("fill","green");
+	d3.select("#bubble_"+getNOCforName(country2)).attr("fill","red");
+	return;
+	
+}
+		

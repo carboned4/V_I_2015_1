@@ -71,9 +71,17 @@ function process_data(data_in){
 	return return_dataset;
 }
 
+function remove_zeros(data_in){
+	var return_dataset = data_in.filter(function(pais){
+		return pais.numberBronze>0;
+		
+	});
+	return return_dataset;
+}
+
 d3.csv("medals_test1.csv", function (data) {
     full_dataset = data;    
-    shown_dataset = process_data(full_dataset);
+    shown_dataset = remove_zeros(process_data(full_dataset));
 	gen_bars();
 	gen_bubbles();
 	//gen_map();
