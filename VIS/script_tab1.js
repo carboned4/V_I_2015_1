@@ -15,7 +15,7 @@ https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 
 var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
-var year_min, year_max;
+var year_min = 2008, year_max = 2008;
 
 var searchedCountry = "";
 
@@ -48,15 +48,17 @@ function createSportsDropdown(){
 $(function() {
     $( "#slider-range" ).slider({
       range: true,
-      min: 1896,
-      max: 2008,
-      values: [ 2008, 2008 ],
+      min: 0,
+      max: 28,
+      values: [ 28, 28 ],
       slide: function( event, ui ) {
-        $( "#amount" ).val(ui.values[ 0 ] + " - "+ ui.values[ 1 ] );
+        $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
+		year_min = 1896+ui.values[0]*4;
+		year_max = 1896+ui.values[1]*4;
       }
     });
-    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
-      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+    $( "#amount" ).val(($( "#slider-range" ).slider( "values", 0 )*4+1896) +
+      " - " + ($( "#slider-range" ).slider( "values", 1 )*4+1896) );
   });
 
 function startupscript(){
