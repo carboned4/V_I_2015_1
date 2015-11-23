@@ -75,10 +75,15 @@ function gen_bars() {
 	
 	
 	
-    var hscale = d3.scale.linear()
-                         .domain([0,d3.max(shown_dataset,function(d){
-							return d["y"+year];})])
-                         .range([0,40/*w-medal_label_shift_right-40*/]);
+    var hscale = d3.scale.sqrt()
+                        .domain([
+						d3.min(shown_dataset,function(d){
+							return d["y"+year];})
+						,
+						d3.max(shown_dataset,function(d){
+							return d["y"+year];})
+						])
+                        .range([0,80/*w-medal_label_shift_right-40*/]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
