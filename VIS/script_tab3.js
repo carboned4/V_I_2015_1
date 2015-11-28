@@ -34,6 +34,11 @@ function changeYear(){
 	gen_bubbles();
 }
 
+function updateYearLabel(){
+	var yearel = document.getElementById("singleyearslider");
+	console.log(yearel.value);
+	document.getElementById("yearelementtowrite").innerHTML	= 1960+yearel.value*4;
+}
 
 function startupscript(){
 	document.getElementById("singleyearslider").value=1;

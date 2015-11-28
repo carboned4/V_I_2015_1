@@ -45,7 +45,7 @@ span{
 }
 }
 
-#divfor2slider{
+#singleyearslider{
 	width: 500px;
 }
 
@@ -80,4 +80,79 @@ span{
 
 #country{
 background-color:#f0D0D0;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: 500px;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 500px;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: white;
+  border: 1px solid #aaaaaa;
+}
+input[type=range]::-webkit-slider-thumb {
+  border: 1px solid #d3d3d3;
+  height: 21px;
+  width: 21px;
+  background: #e6e6e6;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: white;
+}
+input[type=range]::-moz-range-track {
+  width: 500px;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: white;
+border: 1px solid #aaaaaa;
+}
+input[type=range]::-moz-range-thumb {
+  border: 1px solid #d3d3d3;
+  height: 21px;
+  width: 21px;
+  background: #e6e6e6;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 500px;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: 1px solid #aaaaaa;
+  border-width: 16px 0;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-ms-fill-upper {
+  background: white;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-ms-thumb {
+  border: 1px solid #d3d3d3;
+  height: 21px;
+  width: 21px;
+  background: #e6e6e6;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: white;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: white;
 }

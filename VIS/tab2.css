@@ -66,6 +66,12 @@ p{
 
 #medalschoices{
 	display: table-row;
+	font-family: calibri, arial, sans serif;
+}
+
+#amount{
+	font-family: calibri, sans serif;
+    font-size: 12pt;
 }
 
 #fieldinput{

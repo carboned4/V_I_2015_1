@@ -2,12 +2,9 @@
 
   <head>
    <title>G01 - Coefficient</title>
-   <link rel="stylesheet" href="tab3.css">   
-   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-   <script src="http://d3js.org/d3.v3.min.js"></script>
-   <script src="http://d3js.org/topojson.v0.min.js"></script>
-   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-   <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+   <link rel="stylesheet" href="tab3.css">
+   <script src="d3.v3.min.js"></script>
+   <script src="topojson.v0.min.js"></script>
    <script src="script_tab3.js"></script>
    
   </head>
@@ -20,7 +17,7 @@
 			<form>
 				<span>Year:</span>
 				<span id="yearelementtowrite" ></span><br>
-				<input type="range" onchange="changeYear()" name="points" id="singleyearslider" min="0" max="12">
+				<input type="range" onchange="changeYear()" oninput="updateYearLabel()" name="points" id="singleyearslider" min="0" max="12">
 			</form>
 		</div>
 		
