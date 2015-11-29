@@ -19,9 +19,9 @@ var year_min = 2008, year_max = 2008;
 
 var searchedCountry = "";
 
-var selectedSport = "All Sports";
+var selectedSport = "Aquatics";
 
-var selectedMedals == "numberBronzeSilverGold";
+var selectedMedals = "numberBronze";
 
 var merc;
 var projection;
@@ -38,7 +38,9 @@ var sportsChoicesElement;
 var sportsSelectElement;
 function createSportsDropdown(){
 	sportsChoicesElement = document.getElementById("sportschoices");
-	sportsSelectElement = sportsChoicesElement.appendChild(document.createElement("select"));
+	var spsel = document.createElement("select");
+	spsel.id="sportsSelectElement";
+	sportsSelectElement = sportsChoicesElement.appendChild(spsel);
 	var kindofsport;
 	for(kindofsport in sportsChoices){
 		var child = document.createElement("option");
@@ -49,8 +51,21 @@ function createSportsDropdown(){
 	}
 }
 
-var updateMedalsString(){
-	if(document.getElementById()
+function updateMedalsString(){
+	selectedMedals = "number";
+	if(document.getElementById("numberBronze").checked) selectedMedals+="Bronze";
+	if(document.getElementById("numberSilver").checked) selectedMedals+="Silver";
+	if(document.getElementById("numberGold").checked) selectedMedals+="Gold";
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
+}
+
+function changeSport(){
+	selectedSport = document.getElementById("sportsSelectElement").value;
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
 }
 
 $(function() {
@@ -63,6 +78,9 @@ $(function() {
         $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
 		year_min = 1896+ui.values[0]*4;
 		year_max = 1896+ui.values[1]*4;
+		shown_dataset = process_data(full_dataset);
+		gen_bars();
+		gen_bubbles();
       }
     });
     $( "#amount" ).val(($( "#slider-range" ).slider( "values", 0 )*4+1896) +
@@ -72,33 +90,91 @@ $(function() {
 function startupscript(){
 	createSportsDropdown();
 }
-	
+
+function sumSports(unsummed_data){
+	var summed = new Array();
+	var entry;
+	var curryear;
+
+	//for each year, we count the number of medals of each country
+	for(curryear = year_min; curryear <= year_max; curryear +=4){
+		var sumsforthisyear = new Array();
+		var unsummedforthisyear = unsummed_data.filter(function(a){a.Edition == curryear});
+		//^here we have the data for each country in a certain year
+		
+		//for each country-sport in this year, we add its medals to the country's count
+		for (entry in unsummedforthisyear){
+			var startedcounting = false;
+			//we check if we've already started counting for this country or not
+			for(countrythisyear in sumsforthisyear){
+				var blarow = sumsforthisyear[countrythisyear];
+				//we have started counting:
+				if(blarow.NOC == entry.NOC){
+					startedcounting = true;
+					blarow[selectedMedals] += entry[selectedMedals];
+					break;
+				}
+			}
+			//if we haven't started counting (because it doesn't exist in the counting):
+			if(!startedcounting){
+				sumsforthisyear.push({
+					Edition: entry.Edition,
+					NOC: entry.NOC,
+					Sport: "All Sports",
+					country_name: entry.country_name,
+					ioc_code: entry.ioc_code,
+					iso2_code: entry.iso2_code,
+					latitude: entry.latitude,
+					longitude: entry.longitude,
+					numberBronze: entry.numberBronze,
+					numberBronzeGold: entry.numberBronzeGold,
+					numberBronzeSilver: entry.numberBronzeSilver,
+					numberBronzeSilverGold: entry.numberBronzeSilverGold,
+					numberGold: entry.numberGold,
+					numberSilver: entry.numberSilver,
+					numberSilverGold: entry.numberSilvedGold
+				});
+			}
+		}
+		for (entry in sumsforthisyear){
+			summed.push(sumsforthisyear[entry]);
+		}
+	}
+}
+var testarray;
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	//Year in range
-	var yearrange_data = data_in.filter(function(a)){
-		return (a.Edition <= year_max) & (a.Edition >= year_min);
-	}
+	var yearrange_data = data_in.filter(function(a){
+		return ((a.Edition <= year_max) && (a.Edition >= year_min));
+	});
 	//Sport
 	var sportfiltered_data;
 	if(selectedSport == "All Sports") sportfiltered_data = yearrange_data;
 	else{
-		sportfiltered_data = yearrange_data.filter(function(a)){
+		sportfiltered_data = yearrange_data.filter(function(a){
 			return a.Sport == selectedSport;
-		}
+		});
 	}
+	var summedsport_data;
+	if(selectedSport == "All Sports"){
+		summedsport_data = sumSports(sportfiltered_data);
+		testarray = summedsport_data;
+	}
+	else
+		summedsport_data = sportfiltered_data;
 	//Remove zero elements
-	var unzeroed_data = data_in.filter(function(a){ //remove zeros do tiago
-		return a.numberBronze > 0;
+	var unzeroed_data = sportfiltered_data.filter(function(a){ //remove zeros do tiago
+		return a[selectedMedals] > 0;
 	});
 	var return_dataset = unzeroed_data.sort(function(a, b){
-		return b.numberBronze - a.numberBronze;
+		return b[selectedMedals] - a[selectedMedals];
 	});
 	return return_dataset;
 }
 
 
-d3.csv("medals_test1.csv", function (data) {
+d3.csv("medals_improved.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
 	gen_bars();
@@ -119,6 +195,7 @@ function gen_bars() {
 
 
 		
+    d3.select("#bar_chart").selectAll("svg").remove();
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
@@ -126,7 +203,7 @@ function gen_bars() {
 	
     var hscale = d3.scale.linear()
                          .domain([0,d3.max(shown_dataset,function(d){
-							return d.numberBronze;})])
+							return d[selectedMedals];})])
                          .range([0,60/*w-medal_label_shift_right-40*/]);
 
     var yscale = d3.scale.linear()
@@ -149,8 +226,8 @@ function gen_bars() {
 	//make the bars
 	bars_enter.append("rect").attr("height",bar_thickness)
 	    .attr("width",function(d) {
-						if(!d.numberBronze) return hscale(0.5); //for a short bar
-						return hscale(d.numberBronze); //medals shown
+						if(!d[selectedMedals]) return hscale(0.5); //for a short bar
+						return hscale(d[selectedMedals]); //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
 	    .on("click", colorbubbles)
@@ -164,12 +241,12 @@ function gen_bars() {
 		.text(function(d) { return d.NOC;});	//country identifier
 	
 	//make the medal number label
-	bars_enter.append("text").text(function(d) {if (!d.numberBronze) return 0; return d.numberBronze;})
+	bars_enter.append("text").text(function(d) {if (!d[selectedMedals]) return 0; return d[selectedMedals];})
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x", function(d){
-							return bar_shift_right + bar_stroke_thickness/2 + hscale(d.numberBronze) + medal_label_shift_right});
+							return bar_shift_right + bar_stroke_thickness/2 + hscale(d[selectedMedals]) + medal_label_shift_right});
 	
 	//make the country name label
 	bars_enter.append("text").text(function(d) {return d.country_name;})
@@ -208,6 +285,7 @@ function gen_bubbles() {
 		.projection(projection);
 
 	
+    d3.select("#bubble_map").selectAll("svg").remove();
     var svg = d3.select("#bubble_map")
                 .append("svg")
                 .attr("width",w)
@@ -217,7 +295,7 @@ function gen_bubbles() {
 	
     var radiusscale = d3.scale.log()
 						.domain([radius_for_zero*0.9,d3.max(shown_dataset,function(d){
-							return d.numberBronze;})])
+							return d[selectedMedals];})])
                          .range([0,max_radius]);
 	
     var yscale = d3.scale.linear()
@@ -251,8 +329,8 @@ function gen_bubbles() {
 	//make the bubbles
 	bubbles_enter.append("circle")
 	    .attr("r",function(d) {
-                          if(!d.numberBronze) return radiusscale(radius_for_zero);
-						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
+                          if(!d[selectedMedals]) return radiusscale(radius_for_zero);
+						  return radiusscale(d[selectedMedals])/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill","rgb(0,150,255)")	     
 	    .on("click", colorbars)
@@ -266,14 +344,14 @@ function gen_bubbles() {
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
 	    .append("title")
 		.text(function(d)
-			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
-				return d.NOC + " - " + d.numberBronze + " medals\n"+d.country_name;}
+			{   if(!d[selectedMedals]) return d.NOC + " - 0 medals\n"+d.country_name;
+				return d.NOC + " - " + d[selectedMedals] + " medals\n"+d.country_name;}
 		);
 	
 	//make the medal number label
 	bubbles_enter.append("text").text(function(d) {
-						if (d.numberBronze < min_amount_for_label) return "";
-						return d.numberBronze;
+						if (d[selectedMedals] < min_amount_for_label) return "";
+						return d[selectedMedals];
 		})
 		.attr("y",function(d) {
                           return projection([d.longitude, d.latitude+1])[1];
