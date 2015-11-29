@@ -41,7 +41,7 @@ function updateYearLabel(){
 }
 
 function startupscript(){
-	document.getElementById("singleyearslider").value=1;
+	document.getElementById("singleyearslider").value=12;
 	changeYear();
 }
 	

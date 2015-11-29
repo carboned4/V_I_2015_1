@@ -19,6 +19,10 @@ var year_min = 2008, year_max = 2008;
 
 var searchedCountry = "";
 
+var selectedSport = "All Sports";
+
+var selectedMedals == "numberBronzeSilverGold";
+
 var merc;
 var projection;
 
@@ -45,6 +49,10 @@ function createSportsDropdown(){
 	}
 }
 
+var updateMedalsString(){
+	if(document.getElementById()
+}
+
 $(function() {
     $( "#slider-range" ).slider({
       range: true,
@@ -67,10 +75,23 @@ function startupscript(){
 	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
-	var unfiltered_data = data_in.filter(function(a){ //remove zeros do tiago
+	//Year in range
+	var yearrange_data = data_in.filter(function(a)){
+		return (a.Edition <= year_max) & (a.Edition >= year_min);
+	}
+	//Sport
+	var sportfiltered_data;
+	if(selectedSport == "All Sports") sportfiltered_data = yearrange_data;
+	else{
+		sportfiltered_data = yearrange_data.filter(function(a)){
+			return a.Sport == selectedSport;
+		}
+	}
+	//Remove zero elements
+	var unzeroed_data = data_in.filter(function(a){ //remove zeros do tiago
 		return a.numberBronze > 0;
 	});
-	var return_dataset = unfiltered_data.sort(function(a, b){
+	var return_dataset = unzeroed_data.sort(function(a, b){
 		return b.numberBronze - a.numberBronze;
 	});
 	return return_dataset;
