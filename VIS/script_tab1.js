@@ -11,6 +11,10 @@ http://stackoverflow.com/questions/11566935/how-to-access-data-of-a-d3-svg-eleme
 http://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object
 http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
+
+tooltips:
+http://bl.ocks.org/biovisualize/1016860
+http://bl.ocks.org/ilyabo/1373263
 */
 
 var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
@@ -98,17 +102,14 @@ function sumSports(unsummed_data){
 
 	//for each year, we count the number of medals of each country
 	for(curryear = year_min; curryear <= year_max; curryear +=4){
-		console.log(curryear);
 		var sumsforthisyear = new Array();
 		var unsummedforthisyear = unsummed_data.filter(function(a){return a.Edition == curryear;});
 		//^here we have the data for each country in a certain year
 		//for each country-sport in this year, we add its medals to the country's count
 		for (entry in unsummedforthisyear){
-			console.log(">"+unsummedforthisyear[entry].NOC);
 			var startedcounting = false;
 			//we check if we've already started counting for this country or not
 			for(countrythisyear in sumsforthisyear){
-				console.log(">"+sumsforthisyear[countrythisyear].NOC);
 				var blarow = sumsforthisyear[countrythisyear];
 				//we have started counting:
 				if(blarow.NOC == unsummedforthisyear[entry].NOC){
@@ -165,6 +166,7 @@ function process_data(data_in){
 			return a.Sport == selectedSport;
 		});
 	}
+	//handle "all sports"
 	var summedsport_data;
 	if(selectedSport == "All Sports"){
 		summedsport_data = sumSports(sportfiltered_data);
@@ -172,6 +174,14 @@ function process_data(data_in){
 	}
 	else
 		summedsport_data = sportfiltered_data;
+	//handle year ranges
+	var summedyear_data;
+	if(year_min < year_max){
+		summedyear_data = sumYears(summedsport_data);
+		testarray = summedyear_data;
+	}
+	else
+		summedyear_data = summedsport_data;
 	//Remove zero elements
 	var unzeroed_data = summedsport_data.filter(function(a){ //remove zeros do tiago
 		return a[selectedMedals] > 0;
