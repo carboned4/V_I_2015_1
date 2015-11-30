@@ -15,33 +15,53 @@ https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 
 var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
-var year = 2008;
+var year = 1960;
 
 var searchedCountry = "";
 
 var merc;
 var projection;
+var flag = 1;
+var doit;
 
+function startAnim(){
+	var i;
+	flag = 0;
+	doit= setInterval(changeYear, 2000);
+}
+
+function stopAnim(){
+	var i;
+	flag = 1;
+	clearInterval(doit);
+}
+
+function updateYearLabel(){
+ var yearel = document.getElementById("singleyearslider");
+ document.getElementById("yearelementtowrite").innerHTML = 1960+yearel.value*4;
+}
 
 
 function changeYear(){
 	var yearel = document.getElementById("singleyearslider");
-	console.log(yearel.value);
+	if(flag==1)
 	year = 1960+yearel.value*4;
+	else 
+	year +=4; 
 	document.getElementById("yearelementtowrite").innerHTML	=year;
+	if(year!=1960)
+	yearel.value = parseInt(yearel.value) + 1 
+	console.log(yearel.value);
+	if(year==2008)
+	clearInterval(doit);
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
 }
 
-function updateYearLabel(){
-	var yearel = document.getElementById("singleyearslider");
-	console.log(yearel.value);
-	document.getElementById("yearelementtowrite").innerHTML	= 1960+yearel.value*4;
-}
 
 function startupscript(){
-	document.getElementById("singleyearslider").value=12;
+	document.getElementById("singleyearslider").value=0;
 	changeYear();
 }
 	
@@ -118,7 +138,9 @@ function gen_bars() {
 						if(!d["y"+year]) return 0.5; //for a short bar
 						return hscale(d["y"+year]); //medals shown
 	                   })
-	    .attr("fill","rgb(0,150,255)")	     
+	    .attr("fill",function(d) { if (d.country_name==searchedCountry)
+										return "red";
+										return "rgb(0,150,255)";})		     
 	    .on("click", colorbubbles)
 		.attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
@@ -226,7 +248,9 @@ function gen_bubbles() {
                           if(!d["y"+year]) return radiusscale(radius_for_zero);
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
 	                   })
-	    .attr("fill","rgb(0,150,255)")	     
+	    .attr("fill",function(d) { if (d.country_name==searchedCountry)
+										return "red";
+										return "rgb(0,150,255)";})	     
 	    .on("click", colorbars)
 		.attr("cy",function(d) {
                           return projection([d.longitude,d.latitude])[1];
