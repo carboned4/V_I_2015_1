@@ -19,6 +19,8 @@ var year = 1960;
 
 var searchedCountry = "";
 
+var mapdrawn = false;
+
 var merc;
 var projection;
 var flag = 1;
@@ -27,7 +29,7 @@ var doit;
 function startAnim(){
 	var i;
 	flag = 0;
-	doit= setInterval(changeYear, 2000);
+	doit= setInterval(changeYear, 1000);
 }
 
 function stopAnim(){
@@ -51,7 +53,6 @@ function changeYear(){
 	document.getElementById("yearelementtowrite").innerHTML	=year;
 	if(year!=1960)
 	yearel.value = parseInt(yearel.value) + 1 
-	console.log(yearel.value);
 	if(year==2008)
 	clearInterval(doit);
 	shown_dataset = process_data(full_dataset);
@@ -156,7 +157,6 @@ function gen_bars() {
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
-					   .attr("lol", function () {console.log("y"+year);})
 	    .attr("x", function(d){
 							return bar_shift_right + bar_stroke_thickness/2 + hscale(d["y"+year]) + medal_label_shift_right});
 	
@@ -190,18 +190,22 @@ function gen_bubbles() {
 	var radius_for_zero =  0.0005; // lowest value is 0.000821
 	
 	var projection = d3.geo.mercator()
-		.center([0,0])
-		.translate([280,180])
-		.scale(100);
+			.center([0,0])
+			.translate([280,180])
+			.scale(100);
 	var path = d3.geo.path()
-		.projection(projection);
+			.projection(projection);
+	
 
-	d3.select("#bubble_map").selectAll("svg").remove();
-    var svg = d3.select("#bubble_map")
+	d3.selectAll(".bubble").remove();
+	var svg;
+    if(!mapdrawn){
+		svg	= d3.select("#bubble_map")
                 .append("svg")
                 .attr("width",w)
                 .attr("height",h);
-	
+				console.log("drwn");
+	}
 	
 	
     var radiusscale = d3.scale.log()
@@ -225,14 +229,17 @@ function gen_bubbles() {
 	
 	var g = svg.append("g");
 	// load and display the World
-	d3.json("topojson.v0.min.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
-    .enter()
-      .append("path")
-      .attr("d", path)
-	});
+	if(!mapdrawn){
+		d3.json("topojson.v0.min.json", function(error, topology) {
+		g.selectAll("path")
+		  .data(topojson.object(topology, topology.objects.countries)
+			  .geometries)
+		.enter()
+		  .append("path")
+		  .attr("d", path)
+		});
+		mapdrawn = true;
+	}
 	
 	/*
 	parte em que se desenha
@@ -244,6 +251,7 @@ function gen_bubbles() {
        
 	//make the bubbles
 	bubbles_enter.append("circle")
+		.attr("class", "bubble")
 	    .attr("r",function(d) {
                           if(!d["y"+year]) return radiusscale(radius_for_zero);
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
@@ -286,8 +294,7 @@ function gen_bubbles() {
     .on("zoom",function() {
 		var toApply = (zoom_multiplier == d3.event.scale ? 1 : d3.event.scale/zoom_multiplier); 
 		zoom_multiplier = d3.event.scale;
-		console.log(zoom_multiplier);
-        g.attr("transform","translate("+ 
+		g.attr("transform","translate("+ 
             d3.event.translate.join(",")+")scale("+d3.event.scale+")");
         g.selectAll("circle")
             .attr("d", path.projection(projection));
@@ -355,9 +362,7 @@ function colorbars(){
 	
 	var bartohighlight = d3.select(this).attr("id");
 	var bartohighlightID = IdToId(bartohighlight);
-	console.log(bartohighlight + " " + bartohighlightID);
 	previousCountry = getNameforNOC(bartohighlightID);
-	console.log(previousCountry);
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
 	return;
@@ -369,9 +374,7 @@ function colorbubbles(){
 	
 	var bubbletohighlight = d3.select(this).attr("id");
 	var bubbletohighlightID = IdToId(bubbletohighlight);
-	console.log(bubbletohighlight + " " + bubbletohighlightID);
 	previousCountry = getNameforNOC(bubbletohighlightID);
-	console.log(previousCountry);
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
 	return;
@@ -380,10 +383,8 @@ function colorbubbles(){
 function colorbarandbubbles(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
-	console.log(previousCountry);
 	searchedCountry = document.getElementById("country").value;
 	previousCountry = searchedCountry;
-	console.log(previousCountry);
 	
 	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");

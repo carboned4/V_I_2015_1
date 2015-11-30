@@ -177,7 +177,7 @@ function process_data(data_in){
 	//handle year ranges
 	var summedyear_data;
 	if(year_min < year_max){
-		summedyear_data = sumYears(summedsport_data);
+	//	summedyear_data = sumYears(summedsport_data);
 		testarray = summedyear_data;
 	}
 	else
