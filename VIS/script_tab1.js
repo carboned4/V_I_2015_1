@@ -98,47 +98,56 @@ function sumSports(unsummed_data){
 
 	//for each year, we count the number of medals of each country
 	for(curryear = year_min; curryear <= year_max; curryear +=4){
+		console.log(curryear);
 		var sumsforthisyear = new Array();
-		var unsummedforthisyear = unsummed_data.filter(function(a){a.Edition == curryear});
+		var unsummedforthisyear = unsummed_data.filter(function(a){return a.Edition == curryear;});
 		//^here we have the data for each country in a certain year
-		
 		//for each country-sport in this year, we add its medals to the country's count
 		for (entry in unsummedforthisyear){
+			console.log(">"+unsummedforthisyear[entry].NOC);
 			var startedcounting = false;
 			//we check if we've already started counting for this country or not
 			for(countrythisyear in sumsforthisyear){
+				console.log(">"+sumsforthisyear[countrythisyear].NOC);
 				var blarow = sumsforthisyear[countrythisyear];
 				//we have started counting:
-				if(blarow.NOC == entry.NOC){
+				if(blarow.NOC == unsummedforthisyear[entry].NOC){
 					startedcounting = true;
-					blarow[selectedMedals] += entry[selectedMedals];
+					blarow.numberBronze = parseInt(blarow.numberBronze) + unsummedforthisyear[entry].numberBronze;
+					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + unsummedforthisyear[entry].numberBronzeSilver;
+					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + unsummedforthisyear[entry].numberBronzeSilverGold;
+					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + unsummedforthisyear[entry].numberBronzeGold;
+					blarow.numberSilver = parseInt(blarow.numberSilver) + unsummedforthisyear[entry].numberSilver;
+					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + unsummedforthisyear[entry].numberSilverGold;
+					blarow.numberGold = parseInt(blarow.numberGold) + unsummedforthisyear[entry].numberGold;
 					break;
 				}
 			}
 			//if we haven't started counting (because it doesn't exist in the counting):
 			if(!startedcounting){
 				sumsforthisyear.push({
-					Edition: entry.Edition,
-					NOC: entry.NOC,
+					Edition: unsummedforthisyear[entry].Edition,
+					NOC: unsummedforthisyear[entry].NOC,
 					Sport: "All Sports",
-					country_name: entry.country_name,
-					ioc_code: entry.ioc_code,
-					iso2_code: entry.iso2_code,
-					latitude: entry.latitude,
-					longitude: entry.longitude,
-					numberBronze: entry.numberBronze,
-					numberBronzeGold: entry.numberBronzeGold,
-					numberBronzeSilver: entry.numberBronzeSilver,
-					numberBronzeSilverGold: entry.numberBronzeSilverGold,
-					numberGold: entry.numberGold,
-					numberSilver: entry.numberSilver,
-					numberSilverGold: entry.numberSilvedGold
+					country_name: unsummedforthisyear[entry].country_name,
+					ioc_code: unsummedforthisyear[entry].ioc_code,
+					iso2_code: unsummedforthisyear[entry].iso2_code,
+					latitude: unsummedforthisyear[entry].latitude,
+					longitude: unsummedforthisyear[entry].longitude,
+					numberBronze: unsummedforthisyear[entry].numberBronze,
+					numberBronzeGold: unsummedforthisyear[entry].numberBronzeGold,
+					numberBronzeSilver: unsummedforthisyear[entry].numberBronzeSilver,
+					numberBronzeSilverGold: unsummedforthisyear[entry].numberBronzeSilverGold,
+					numberGold: unsummedforthisyear[entry].numberGold,
+					numberSilver: unsummedforthisyear[entry].numberSilver,
+					numberSilverGold: unsummedforthisyear[entry].numberSilvedGold
 				});
 			}
 		}
 		for (entry in sumsforthisyear){
 			summed.push(sumsforthisyear[entry]);
 		}
+	return summed;
 	}
 }
 var testarray;
