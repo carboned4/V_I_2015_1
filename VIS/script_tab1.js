@@ -113,13 +113,13 @@ function sumSports(unsummed_data){
 				//we have started counting:
 				if(blarow.NOC == unsummedforthisyear[entry].NOC){
 					startedcounting = true;
-					blarow.numberBronze = parseInt(blarow.numberBronze) + unsummedforthisyear[entry].numberBronze;
-					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + unsummedforthisyear[entry].numberBronzeSilver;
-					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + unsummedforthisyear[entry].numberBronzeSilverGold;
-					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + unsummedforthisyear[entry].numberBronzeGold;
-					blarow.numberSilver = parseInt(blarow.numberSilver) + unsummedforthisyear[entry].numberSilver;
-					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + unsummedforthisyear[entry].numberSilverGold;
-					blarow.numberGold = parseInt(blarow.numberGold) + unsummedforthisyear[entry].numberGold;
+					blarow.numberBronze = parseInt(blarow.numberBronze) + parseInt(unsummedforthisyear[entry].numberBronze);
+					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + parseInt(unsummedforthisyear[entry].numberBronzeSilver);
+					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + parseInt(unsummedforthisyear[entry].numberBronzeSilverGold);
+					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + parseInt(unsummedforthisyear[entry].numberBronzeGold);
+					blarow.numberSilver = parseInt(blarow.numberSilver) + parseInt(unsummedforthisyear[entry].numberSilver);
+					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + parseInt(unsummedforthisyear[entry].numberSilverGold);
+					blarow.numberGold = parseInt(blarow.numberGold) + parseInt(unsummedforthisyear[entry].numberGold);
 					break;
 				}
 			}
@@ -140,7 +140,7 @@ function sumSports(unsummed_data){
 					numberBronzeSilverGold: unsummedforthisyear[entry].numberBronzeSilverGold,
 					numberGold: unsummedforthisyear[entry].numberGold,
 					numberSilver: unsummedforthisyear[entry].numberSilver,
-					numberSilverGold: unsummedforthisyear[entry].numberSilvedGold
+					numberSilverGold: unsummedforthisyear[entry].numberSilverGold
 				});
 			}
 		}
@@ -173,7 +173,7 @@ function process_data(data_in){
 	else
 		summedsport_data = sportfiltered_data;
 	//Remove zero elements
-	var unzeroed_data = sportfiltered_data.filter(function(a){ //remove zeros do tiago
+	var unzeroed_data = summedsport_data.filter(function(a){ //remove zeros do tiago
 		return a[selectedMedals] > 0;
 	});
 	var return_dataset = unzeroed_data.sort(function(a, b){
