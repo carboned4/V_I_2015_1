@@ -178,7 +178,7 @@ var projection;
 var zoom_multiplier = 1;
 var g;
 function gen_bubbles() {
-	zoom_multiplier=1;
+	//zoom_multiplier=1;
 	var w = 600;
     var h = 300;
 	var bar_thickness = 20;
@@ -229,7 +229,7 @@ function gen_bubbles() {
 	if(!mapdrawn){
 		g = bubblesvg.append("g");
 	// load and display the World
-	
+			
 		
 		
 			d3.json("topojson.v0.min.json", function(error, topology) {
@@ -251,10 +251,11 @@ function gen_bubbles() {
 		
 	var bubbles_enter = bubbles.enter().append("g");
        
+	var transformFromMap = g.attr("transform");
 	//make the bubbles
 	bubbles_enter.attr("class", "bubble")
 		.append("circle")
-	    .attr("r",function(d) {
+		.attr("r",function(d) {
                           if(!d["y"+year]) return radiusscale(radius_for_zero);
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
 	                   })
@@ -268,27 +269,18 @@ function gen_bubbles() {
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
-		.attr("stroke-width",3).attr("stroke","black")
+		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.ioc_code;})
 	    .append("title")
 		.text(function(d)
 			{   if(!d["y"+year]) return d.ioc_code + " - 0 million medals/person\n"+d.country_name;
 				return d.ioc_code + " - " + d["y"+year] + " million medals/person\n"+d.country_name;}
 		);
-		
 	
-	//make the medal number label
-	/*bubbles_enter.append("text").text(function(d) {
-						if (d["y"+year] < min_amount_for_label) return "";
-						return d["y"+year];
-		})
-		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude+1])[1];
-	                   })
-	    .attr("x", function(d) {
-                          return projection([d.longitude-2.5, d.latitude])[0];
-	                   })
-		.attr("fill","white");*/
+	//fixes zooming in, changing year, then zooming/dragging
+	bubbles_enter.attr("transform", transformFromMap)
+	.attr("d", path.projection(projection));
+	
 		
 	bubbles.exit().remove();
 	
@@ -316,15 +308,7 @@ function gen_bubbles() {
             .attr("d", path.projection(projection))
 			.style("font-size", function(){
 				return parseFloat(d3.select(this).style("font-size"))/toApply;
-			})/*
-			.attr("y", function(d) {
-				
-				return projection([d.longitude, d.latitude+1-1/toApply])[1];
-	                   })
-			.attr("x", function(d) {
-				
-				return projection([d.longitude-2.5+2.5/toApply, d.latitude])[0];
-	                   })*/;
+			})
 	});
 	
 	
