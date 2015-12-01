@@ -23,38 +23,36 @@ var mapdrawn = false;
 
 var merc;
 var projection;
-var flag = 1;
 var doit;
 
 function startAnim(){
-	var i;
-	flag = 0;
-	doit= setInterval(changeYear, 1000);
+	doit= setInterval(animate, 1000);
 }
 
 function stopAnim(){
-	var i;
-	flag = 1;
 	clearInterval(doit);
 }
 
+function animate(){
+	if(year==2008){
+		clearInterval(doit);
+		return;
+	}
+	var yearel = document.getElementById("singleyearslider");
+	yearel.value = parseInt(yearel.value) + 1;
+	changeYear();
+}
+
 function updateYearLabel(){
- var yearel = document.getElementById("singleyearslider");
- document.getElementById("yearelementtowrite").innerHTML = 1960+yearel.value*4;
+	var yearel = document.getElementById("singleyearslider");
+	document.getElementById("yearelementtowrite").innerHTML = 1960+yearel.value*4;
 }
 
 
 function changeYear(){
 	var yearel = document.getElementById("singleyearslider");
-	if(flag==1)
 	year = 1960+yearel.value*4;
-	else 
-	year +=4; 
 	document.getElementById("yearelementtowrite").innerHTML	=year;
-	if(year!=1960)
-	yearel.value = parseInt(yearel.value) + 1 
-	if(year==2008)
-	clearInterval(doit);
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
@@ -174,7 +172,11 @@ function gen_bars() {
 	
 }
 
+var bubblesvg;
+var path;
+var projection;
 var zoom_multiplier = 1;
+var g;
 function gen_bubbles() {
 	zoom_multiplier=1;
 	var w = 600;
@@ -189,24 +191,15 @@ function gen_bubbles() {
 	var min_amount_for_label = 10;
 	var radius_for_zero =  0.0005; // lowest value is 0.000821
 	
-	var projection = d3.geo.mercator()
-			.center([0,0])
-			.translate([280,180])
-			.scale(100);
-	var path = d3.geo.path()
-			.projection(projection);
 	
 
 	d3.selectAll(".bubble").remove();
-	var svg;
-    if(!mapdrawn){
-		svg	= d3.select("#bubble_map")
-                .append("svg")
-                .attr("width",w)
-                .attr("height",h);
-				console.log("drwn");
+	if(!mapdrawn){
+			bubblesvg = d3.select("#bubble_map")
+			.append("svg")
+			.attr("width",w)
+			.attr("height",h);
 	}
-	
 	
     var radiusscale = d3.scale.log()
 						.domain([
@@ -226,32 +219,41 @@ function gen_bubbles() {
                          .domain([-180,180])
                          .range([0,w]);
 	
+	projection = d3.geo.mercator()
+				.center([0,0])
+				.translate([280,180])
+				.scale(100);
+	path = d3.geo.path()
+				.projection(projection);
 	
-	var g = svg.append("g");
-	// load and display the World
 	if(!mapdrawn){
-		d3.json("topojson.v0.min.json", function(error, topology) {
-		g.selectAll("path")
-		  .data(topojson.object(topology, topology.objects.countries)
-			  .geometries)
-		.enter()
-		  .append("path")
-		  .attr("d", path)
-		});
-		mapdrawn = true;
+		g = bubblesvg.append("g");
+	// load and display the World
+	
+		
+		
+			d3.json("topojson.v0.min.json", function(error, topology) {
+			g.selectAll("path")
+			  .data(topojson.object(topology, topology.objects.countries)
+				  .geometries)
+			.enter()
+			  .append("path")
+			  .attr("d", path)
+			});
+			mapdrawn = true;
 	}
 	
 	/*
 	parte em que se desenha
 	*/
-	var bubbles = svg.selectAll("g.hack") //remove the first g element (map)
+	var bubbles = bubblesvg.selectAll("g.hack") //remove the first g element (map)
 		.data(shown_dataset);
 		
 	var bubbles_enter = bubbles.enter().append("g");
        
 	//make the bubbles
-	bubbles_enter.append("circle")
-		.attr("class", "bubble")
+	bubbles_enter.attr("class", "bubble")
+		.append("circle")
 	    .attr("r",function(d) {
                           if(!d["y"+year]) return radiusscale(radius_for_zero);
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
@@ -327,7 +329,7 @@ function gen_bubbles() {
 	
 	
 	d3.select("#country").on("change", colorbarandbubbles);
-	svg.call(zoom);
+	bubblesvg.call(zoom);
 	
 }
 

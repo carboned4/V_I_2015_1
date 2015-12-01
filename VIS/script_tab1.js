@@ -281,9 +281,11 @@ function gen_bars() {
 	
 }
 
+var projection;
+var path;
 var zoom_multiplier = 1;
 function gen_bubbles() {
-	
+	zoom_multiplier = 1;
 	var w = 600;
     var h = 300;
 	var bar_thickness = 20;
@@ -296,11 +298,11 @@ function gen_bubbles() {
 	var min_amount_for_label = 10;
 	var radius_for_zero = 0.5
 	
-	var projection = d3.geo.mercator()
+	projection = d3.geo.mercator()
 		.center([0,0])
 		.translate([280,180])
 		.scale(100);
-	var path = d3.geo.path()
+	path = d3.geo.path()
 		.projection(projection);
 
 	
