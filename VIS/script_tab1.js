@@ -27,8 +27,11 @@ var selectedSport = "Aquatics";
 
 var selectedMedals = "numberBronze";
 
+var mapdrawn = false;
+
 var merc;
 var projection;
+var doit;
 
 var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminton",
 "Baseball", "Basketball", "Basque Pelota", "Boxing", "Canoe / Kayak", "Cricket",
@@ -67,6 +70,46 @@ function updateMedalsString(){
 
 function changeSport(){
 	selectedSport = document.getElementById("sportsSelectElement").value;
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
+}
+
+function startAnim(){
+	var a_min = $("#slider-range").slider("values",0);
+	var a_max = a_min; //these are a value 0-28
+	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",1,a_max);
+	year_max = year_min = 1896 + a_min*4;
+	$( "#amount" ).val(year_min + " - "+ year_max );
+	changeYear();
+	doit= setInterval(animate, 1000);
+}
+
+function stopAnim(){
+	clearInterval(doit);
+}
+
+function animate(){
+	console.log("anim");
+	if(year_max >= 2008){
+		clearInterval(doit);
+		year_max = year_min = 2008;
+		return;
+	}
+	var a_max = $("#slider-range").slider("values",1) +1;
+	var a_min = a_max; //these are a value 0-28
+	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",1,a_max);
+	$( "#amount" ).val(year_min + " - "+ year_max );
+	year_max = year_min = 1896 + a_min*4;
+	changeYear();
+}
+
+function changeYear(){
+	var a_max = $("#slider-range").slider("values",1);
+	var a_min = a_max; //these are a value 0-28
+	year_max = year_min = 1896 + a_min*4;
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
@@ -220,7 +263,7 @@ function gen_bars() {
                 .attr("width",w)
                 .attr("height",shown_dataset.length*(between_bars+bar_thickness));
 	
-    var hscale = d3.scale.linear()
+    var hscale = d3.scale.sqrt()
                          .domain([0,d3.max(shown_dataset,function(d){
 							return d[selectedMedals];})])
                          .range([0,60/*w-medal_label_shift_right-40*/]);
@@ -281,11 +324,13 @@ function gen_bars() {
 	
 }
 
-var projection;
+var bubblesvg;
 var path;
+var projection;
 var zoom_multiplier = 1;
+var g;
 function gen_bubbles() {
-	zoom_multiplier = 1;
+	//zoom_multiplier = 1;
 	var w = 600;
     var h = 300;
 	var bar_thickness = 20;
@@ -298,20 +343,15 @@ function gen_bubbles() {
 	var min_amount_for_label = 10;
 	var radius_for_zero = 0.5
 	
-	projection = d3.geo.mercator()
-		.center([0,0])
-		.translate([280,180])
-		.scale(100);
-	path = d3.geo.path()
-		.projection(projection);
-
 	
-    d3.select("#bubble_map").selectAll("svg").remove();
-    var svg = d3.select("#bubble_map")
-                .append("svg")
-                .attr("width",w)
-                .attr("height",h);
 	
+    d3.selectAll(".bubble").remove();
+	if(!mapdrawn){
+			bubblesvg = d3.select("#bubble_map")
+			.append("svg")
+			.attr("width",w)
+			.attr("height",h);
+	}
 	
 	
     var radiusscale = d3.scale.log()
@@ -327,33 +367,46 @@ function gen_bubbles() {
                          .domain([-180,180])
                          .range([0,w]);
 	
-	
-	var g = svg.append("g");
-	// load and display the World
-	d3.json("topojson.v0.min.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
-    .enter()
-      .append("path")
-      .attr("d", path)
-	});
-	
+	projection = d3.geo.mercator()
+		.center([0,0])
+		.translate([280,180])
+		.scale(100);
+	path = d3.geo.path()
+		.projection(projection);
+
+		
+	if(!mapdrawn){
+		g = bubblesvg.append("g");
+		// load and display the World
+		d3.json("topojson.v0.min.json", function(error, topology) {
+		g.selectAll("path")
+		  .data(topojson.object(topology, topology.objects.countries)
+			  .geometries)
+		.enter()
+		  .append("path")
+		  .attr("d", path)
+		});
+		mapdrawn = true;
+	}
 	/*
 	parte em que se desenha
 	*/
-	var bubbles = svg.selectAll("g.hack") //remove the first g element (map)
+	var bubbles = bubblesvg.selectAll("g.hack") //remove the first g element (map)
 		.data(shown_dataset);
 		
 	var bubbles_enter = bubbles.enter().append("g");
        
+	var transformFromMap = g.attr("transform");
 	//make the bubbles
-	bubbles_enter.append("circle")
+	bubbles_enter.attr("class", "bubble")
+		.append("circle")
 	    .attr("r",function(d) {
                           if(!d[selectedMedals]) return radiusscale(radius_for_zero);
 						  return radiusscale(d[selectedMedals])/zoom_multiplier; //medals shown
 	                   })
-	    .attr("fill","rgb(0,150,255)")	     
+	    .attr("fill",function(d) { if (d.country_name==searchedCountry)
+										return "red";
+										return "rgb(0,150,255)";})	     
 	    .on("click", colorbars)
 		.attr("cy",function(d) {
                           return projection([d.longitude,d.latitude])[1];
@@ -361,7 +414,7 @@ function gen_bubbles() {
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
-		.attr("stroke-width",3).attr("stroke","black")
+		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
 	    .append("title")
 		.text(function(d)
@@ -375,12 +428,18 @@ function gen_bubbles() {
 						return d[selectedMedals];
 		})
 		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude+1])[1];
+                          return projection([d.longitude, d.latitude+1/zoom_multiplier])[1];
 	                   })
 	    .attr("x", function(d) {
-                          return projection([d.longitude-2.5, d.latitude])[0];
+                          return projection([d.longitude-2.5/zoom_multiplier, d.latitude])[0];
 	                   })
-		.attr("fill","white");
+		.attr("fill","white")
+		.attr("font-size",14/zoom_multiplier);
+	
+	//fixes zooming in, changing year, then zooming/dragging
+	bubbles_enter.attr("transform", transformFromMap)
+	.attr("d", path.projection(projection));
+	
 	
 	var zoom = d3.behavior.zoom()
     .on("zoom",function() {
@@ -405,21 +464,16 @@ function gen_bubbles() {
 			});
 		bubbles_enter.selectAll("text")
             .attr("d", path.projection(projection))
-			.style("font-size", function(){
+			/*.attr("x", function(){
+				return projection([d3.select(this).attr("x"), 0])[0];
+			})
+			*/.style("font-size", function(){
 				return parseFloat(d3.select(this).style("font-size"))/toApply;
-			})/*
-			.attr("y", function(d) {
-				
-				return projection([d.longitude, d.latitude+1-1/toApply])[1];
-	                   })
-			.attr("x", function(d) {
-				
-				return projection([d.longitude-2.5+2.5/toApply, d.latitude])[0];
-	                   })*/;
+			})
 	});
 	
 	d3.select("#country").on("change", colorbarandbubbles);
-	svg.call(zoom);
+	bubblesvg.call(zoom);
 	
 }
 
@@ -454,9 +508,7 @@ function colorbars(){
 	
 	var bartohighlight = d3.select(this).attr("id");
 	var bartohighlightID = IdToId(bartohighlight);
-	console.log(bartohighlight + " " + bartohighlightID);
 	previousCountry = getNameforNOC(bartohighlightID);
-	console.log(previousCountry);
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
 	return;
@@ -468,9 +520,7 @@ function colorbubbles(){
 	
 	var bubbletohighlight = d3.select(this).attr("id");
 	var bubbletohighlightID = IdToId(bubbletohighlight);
-	console.log(bubbletohighlight + " " + bubbletohighlightID);
 	previousCountry = getNameforNOC(bubbletohighlightID);
-	console.log(previousCountry);
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
 	return;
@@ -479,10 +529,8 @@ function colorbubbles(){
 function colorbarandbubbles(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
-	console.log(previousCountry);
 	searchedCountry = document.getElementById("country").value;
 	previousCountry = searchedCountry;
-	console.log(previousCountry);
 	
 	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");

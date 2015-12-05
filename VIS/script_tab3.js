@@ -229,18 +229,15 @@ function gen_bubbles() {
 	if(!mapdrawn){
 		g = bubblesvg.append("g");
 	// load and display the World
-			
-		
-		
-			d3.json("topojson.v0.min.json", function(error, topology) {
-			g.selectAll("path")
-			  .data(topojson.object(topology, topology.objects.countries)
-				  .geometries)
-			.enter()
-			  .append("path")
-			  .attr("d", path)
-			});
-			mapdrawn = true;
+		d3.json("topojson.v0.min.json", function(error, topology) {
+		g.selectAll("path")
+		  .data(topojson.object(topology, topology.objects.countries)
+			  .geometries)
+		.enter()
+		  .append("path")
+		  .attr("d", path)
+		});
+		mapdrawn = true;
 	}
 	
 	/*
