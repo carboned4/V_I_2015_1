@@ -138,6 +138,7 @@ function startupscript(){
 	createSportsDropdown();
 }
 
+/*adds all the sports into All Sports, by year and country*/
 function sumSports(unsummed_data){
 	var summed = new Array();
 	var entry;
@@ -194,6 +195,65 @@ function sumSports(unsummed_data){
 	return summed;
 	}
 }
+
+/* adds all the medals of a country in the specified sport*/
+function sumYears(unsummed_data){
+	var summed = new Array();
+	var entry;
+	var i_sports;
+
+	//for each sport, we count the number of medals of each country
+	for(i_sports = 0; i_sports <= sportsChoices.length; i_sports +=1){
+		var sumsforthissport = new Array();
+		var unsummedforthissport = unsummed_data.filter(function(a){return a.Sport == sportsChoices[i_sports];});
+		//^here we have the data for each country for a certain sport (could be All Sports which counts more than one)
+		//for each country-year in this sport, we add its medals to the country's count
+		for (entry in unsummedforthissport){
+			var startedcounting = false;
+			//we check if we've already started counting for this country or not
+			for(countrythissport in sumsforthissport){
+				var blarow = sumsforthissport[countrythissport];
+				//we have started counting:
+				if(blarow.NOC == unsummedforthissport[entry].NOC){
+					startedcounting = true;
+					blarow.numberBronze = parseInt(blarow.numberBronze) + parseInt(unsummedforthissport[entry].numberBronze);
+					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + parseInt(unsummedforthissport[entry].numberBronzeSilver);
+					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + parseInt(unsummedforthissport[entry].numberBronzeSilverGold);
+					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + parseInt(unsummedforthissport[entry].numberBronzeGold);
+					blarow.numberSilver = parseInt(blarow.numberSilver) + parseInt(unsummedforthissport[entry].numberSilver);
+					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + parseInt(unsummedforthissport[entry].numberSilverGold);
+					blarow.numberGold = parseInt(blarow.numberGold) + parseInt(unsummedforthissport[entry].numberGold);
+					break;
+				}
+			}
+			//if we haven't started counting (because it doesn't exist in the counting):
+			if(!startedcounting){
+				sumsforthissport.push({
+					Edition: year_min+"-"+year_min,
+					NOC: unsummedforthissport[entry].NOC,
+					Sport: unsummedforthissport[entry].Sport,
+					country_name: unsummedforthissport[entry].country_name,
+					ioc_code: unsummedforthissport[entry].ioc_code,
+					iso2_code: unsummedforthissport[entry].iso2_code,
+					latitude: unsummedforthissport[entry].latitude,
+					longitude: unsummedforthissport[entry].longitude,
+					numberBronze: unsummedforthissport[entry].numberBronze,
+					numberBronzeGold: unsummedforthissport[entry].numberBronzeGold,
+					numberBronzeSilver: unsummedforthissport[entry].numberBronzeSilver,
+					numberBronzeSilverGold: unsummedforthissport[entry].numberBronzeSilverGold,
+					numberGold: unsummedforthissport[entry].numberGold,
+					numberSilver: unsummedforthissport[entry].numberSilver,
+					numberSilverGold: unsummedforthissport[entry].numberSilverGold
+				});
+			}
+		}
+		for (entry in sumsforthissport){
+			summed.push(sumsforthissport[entry]);
+		}
+	return summed;
+	}
+}
+
 var testarray;
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
