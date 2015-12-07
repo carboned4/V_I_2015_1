@@ -91,7 +91,6 @@ function stopAnim(){
 }
 
 function animate(){
-	console.log("anim");
 	if(year_max >= 2008){
 		clearInterval(doit);
 		year_max = year_min = 2008;
@@ -99,8 +98,8 @@ function animate(){
 	}
 	var a_max = $("#slider-range").slider("values",1) +1;
 	var a_min = a_max; //these are a value 0-28
-	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
-	$("#slider-range").slider("values",1,a_max);
+	$("#slider-range").slider("values",1,a_max); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",0,a_min);
 	$( "#amount" ).val(year_min + " - "+ year_max );
 	year_max = year_min = 1896 + a_min*4;
 	changeYear();
@@ -192,8 +191,9 @@ function sumSports(unsummed_data){
 		for (entry in sumsforthisyear){
 			summed.push(sumsforthisyear[entry]);
 		}
-	return summed;
+	
 	}
+	return summed;
 }
 
 /* adds all the medals of a country in the specified sport*/
@@ -209,12 +209,16 @@ function sumYears(unsummed_data){
 		//^here we have the data for each country for a certain sport (could be All Sports which counts more than one)
 		//for each country-year in this sport, we add its medals to the country's count
 		for (entry in unsummedforthissport){
+			//console.log(sportsChoices[i_sports] + sportsChoices.length + i_sports);
 			var startedcounting = false;
 			//we check if we've already started counting for this country or not
 			for(countrythissport in sumsforthissport){
 				var blarow = sumsforthissport[countrythissport];
+				//console.log(sportsChoices[i_sports]);
 				//we have started counting:
+				
 				if(blarow.NOC == unsummedforthissport[entry].NOC){
+					//console.log("update "+blarow.NOC + blarow.Sport);
 					startedcounting = true;
 					blarow.numberBronze = parseInt(blarow.numberBronze) + parseInt(unsummedforthissport[entry].numberBronze);
 					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + parseInt(unsummedforthissport[entry].numberBronzeSilver);
@@ -228,8 +232,9 @@ function sumYears(unsummed_data){
 			}
 			//if we haven't started counting (because it doesn't exist in the counting):
 			if(!startedcounting){
+				//console.log("add"+unsummedforthissport[entry].NOC);
 				sumsforthissport.push({
-					Edition: year_min+"-"+year_min,
+					Edition: year_min+"-"+year_max,
 					NOC: unsummedforthissport[entry].NOC,
 					Sport: unsummedforthissport[entry].Sport,
 					country_name: unsummedforthissport[entry].country_name,
@@ -250,8 +255,8 @@ function sumYears(unsummed_data){
 		for (entry in sumsforthissport){
 			summed.push(sumsforthissport[entry]);
 		}
-	return summed;
 	}
+	return summed;
 }
 
 var testarray;
@@ -280,13 +285,13 @@ function process_data(data_in){
 	//handle year ranges
 	var summedyear_data;
 	if(year_min < year_max){
-	//	summedyear_data = sumYears(summedsport_data);
+		summedyear_data = sumYears(summedsport_data);
 		testarray = summedyear_data;
 	}
 	else
 		summedyear_data = summedsport_data;
 	//Remove zero elements
-	var unzeroed_data = summedsport_data.filter(function(a){ //remove zeros do tiago
+	var unzeroed_data = summedyear_data.filter(function(a){ //remove zeros do tiago
 		return a[selectedMedals] > 0;
 	});
 	var return_dataset = unzeroed_data.sort(function(a, b){
@@ -325,8 +330,8 @@ function gen_bars() {
 	
     var hscale = d3.scale.sqrt()
                          .domain([0,d3.max(shown_dataset,function(d){
-							return d[selectedMedals];})])
-                         .range([0,60/*w-medal_label_shift_right-40*/]);
+							return parseInt(d[selectedMedals]);})])
+                         .range([0,w - bar_shift_right - medal_label_shift_right - 60]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
@@ -335,7 +340,8 @@ function gen_bars() {
     
 
 	
-
+	console.log(d3.max(shown_dataset,function(d){
+							return d[selectedMedals];}));
 	
 	/*
 	parte em que se desenha as bubbles
@@ -416,7 +422,7 @@ function gen_bubbles() {
 	
     var radiusscale = d3.scale.log()
 						.domain([radius_for_zero*0.9,d3.max(shown_dataset,function(d){
-							return d[selectedMedals];})])
+							return parseInt(d[selectedMedals]);})])
                          .range([0,max_radius]);
 	
     var yscale = d3.scale.linear()
@@ -488,10 +494,19 @@ function gen_bubbles() {
 						return d[selectedMedals];
 		})
 		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude+1/zoom_multiplier])[1];
+                          return projection([d.longitude, d.latitude +1/zoom_multiplier])[1];
 	                   })
 	    .attr("x", function(d) {
                           return projection([d.longitude-2.5/zoom_multiplier, d.latitude])[0];
+	                   })
+		.attr("auxy",function(d) {
+                          return d.latitude;
+	                   })
+	    .attr("auxx", function(d) {
+                          return d.longitude;
+	                   })
+		.attr("labelfor", function(d) {
+                          return d.NOC;
 	                   })
 		.attr("fill","white")
 		.attr("font-size",14/zoom_multiplier);
@@ -524,10 +539,13 @@ function gen_bubbles() {
 			});
 		bubbles_enter.selectAll("text")
             .attr("d", path.projection(projection))
-			/*.attr("x", function(){
-				return projection([d3.select(this).attr("x"), 0])[0];
+			.attr("x", function(){
+				return projection([parseInt(d3.select(this).attr("auxx"))-2.5/zoom_multiplier, 0])[0];
 			})
-			*/.style("font-size", function(){
+			.attr("y", function(){
+				return projection([0, parseInt(d3.select(this).attr("auxy"))+1/zoom_multiplier])[1];
+			})
+			.style("font-size", function(){
 				return parseFloat(d3.select(this).style("font-size"))/toApply;
 			})
 	});

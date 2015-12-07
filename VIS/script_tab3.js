@@ -106,12 +106,12 @@ function gen_bars() {
     var hscale = d3.scale.sqrt()
                         .domain([
 						d3.min(shown_dataset,function(d){
-							return d["y"+year];})
+							return parseFloat(d["y"+year]);})
 						,
 						d3.max(shown_dataset,function(d){
-							return d["y"+year];})
+							return parseFloat(d["y"+year]);})
 						])
-                        .range([0,80/*w-medal_label_shift_right-40*/]);
+                        .range([0,w - bar_shift_right - medal_label_shift_right - 100]);
 
     var yscale = d3.scale.linear()
                          .domain([0,shown_dataset.length])
@@ -120,7 +120,6 @@ function gen_bars() {
     
 
 	
-
 	
 	/*
 	parte em que se desenha as bubbles
@@ -204,10 +203,10 @@ function gen_bubbles() {
     var radiusscale = d3.scale.log()
 						.domain([
 							d3.min(shown_dataset,function(d){
-							return d["y"+year];})
+							return parseFloat(d["y"+year]);})
 							,
 							d3.max(shown_dataset,function(d){
-							return d["y"+year];})
+							return parseFloat(d["y"+year]);})
 							])
                          .range([0,max_radius]);
 	
@@ -253,7 +252,7 @@ function gen_bubbles() {
 	bubbles_enter.attr("class", "bubble")
 		.append("circle")
 		.attr("r",function(d) {
-                          if(!d["y"+year]) return radiusscale(radius_for_zero);
+                          if(!d["y"+year]) return 0;//radiusscale(radius_for_zero);
 						  return radiusscale(d["y"+year])/zoom_multiplier; //medals shown
 	                   })
 	    .attr("fill",function(d) { if (d.country_name==searchedCountry)
