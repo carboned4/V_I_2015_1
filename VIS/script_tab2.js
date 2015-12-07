@@ -140,8 +140,9 @@ chosen_dataset = process_chosenData (shown_dataset);
 						if(!d.numberBronze) return hscale(0.5); //for a short bar
 						return hscale(d.numberBronze); //medals shown
 	                   })
-	    .attr("fill",function(d) { if(d.country_name==country1)
-									return "green";
+	    .attr("fill",function(d) { console.log("im here");
+									if(d.country_name==country1)
+									return "#66FF66";
 								   else if(d.country_name==country2)
 									return "red";
 									else return "rgb(0,150,255)";
@@ -149,7 +150,6 @@ chosen_dataset = process_chosenData (shown_dataset);
 	    .attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
-		.attr("asas", function() {console.log(chosen_dataset.length);})
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.NOC;})
@@ -286,7 +286,7 @@ function gen_bubbles() {
 
 	
 	//make the medal number label
-	bubbles_enter.append("text").text(function(d) {
+	/*bubbles_enter.append("text").text(function(d) {
 						if (d.numberBronze < min_amount_for_label) return "";
 						return d.numberBronze;
 		})
@@ -296,7 +296,7 @@ function gen_bubbles() {
 	    .attr("x", function(d) {
                           return projection([d.longitude-2.5, d.latitude])[0];
 	                   })
-		.attr("fill","white");
+		.attr("fill","white");2*/
 	bubbles.exit().remove();
 	
 		
@@ -364,7 +364,7 @@ country1=document.getElementById('country1').value;
 country2=document.getElementById('country2').value;
 	d3.select("#bubble_"+getNOCforName(previousCountry1)).style("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry2)).style("fill","rgb(0,150,255)");
-	d3.select("#bubble_"+getNOCforName(country1)).style("fill","green");
+	d3.select("#bubble_"+getNOCforName(country1)).style("fill","#66FF66");
 	d3.select("#bubble_"+getNOCforName(country2)).style("fill","red");
 	gen_bars();
 

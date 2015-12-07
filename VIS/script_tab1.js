@@ -489,7 +489,7 @@ function gen_bubbles() {
 		);
 	
 	//make the medal number label
-	bubbles_enter.append("text").text(function(d) {
+	/*bubbles_enter.append("text").text(function(d) {
 						if (d[selectedMedals] < min_amount_for_label) return "";
 						return d[selectedMedals];
 		})
@@ -509,7 +509,7 @@ function gen_bubbles() {
                           return d.NOC;
 	                   })
 		.attr("fill","white")
-		.attr("font-size",14/zoom_multiplier);
+		.attr("font-size",14/zoom_multiplier);*/
 	
 	//fixes zooming in, changing year, then zooming/dragging
 	bubbles_enter.attr("transform", transformFromMap)
@@ -537,7 +537,7 @@ function gen_bubbles() {
 			.attr("stroke-width", function(){
 				return d3.select(this).attr("stroke-width")/toApply;
 			});
-		bubbles_enter.selectAll("text")
+		/*bubbles_enter.selectAll("text")
             .attr("d", path.projection(projection))
 			.attr("x", function(){
 				return projection([parseInt(d3.select(this).attr("auxx"))-2.5/zoom_multiplier, 0])[0];
@@ -547,7 +547,7 @@ function gen_bubbles() {
 			})
 			.style("font-size", function(){
 				return parseFloat(d3.select(this).style("font-size"))/toApply;
-			})
+			});*/
 	});
 	
 	d3.select("#country").on("change", colorbarandbubbles);

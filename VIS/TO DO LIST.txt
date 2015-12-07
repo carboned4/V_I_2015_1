@@ -1,0 +1,9 @@
+TOOLTIPS 
+Tirar numeros das bolas
+.3f na tab3
+Line graph showing evolution on tab3
+Explosoes das guerras 
+CSS
+Fazer menu com as 3 tabs num só html
+verde mais claro
+Sidebar com desportos (se houver tempo lol)

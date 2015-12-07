@@ -150,7 +150,7 @@ function gen_bars() {
 		.text(function(d) { return d.ioc_code;});	//country identifier
 		
 	//make the medal number label
-	bars_enter.append("text").text(function(d) {if (!d["y"+year]) return 0; return d["y"+year];})
+	bars_enter.append("text").text(function(d) {if (!d["y"+year]) return 0; return parseFloat(d["y"+year]).toFixed(3);})
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
@@ -270,7 +270,7 @@ function gen_bubbles() {
 	    .append("title")
 		.text(function(d)
 			{   if(!d["y"+year]) return d.ioc_code + " - 0 million medals/person\n"+d.country_name;
-				return d.ioc_code + " - " + d["y"+year] + " million medals/person\n"+d.country_name;}
+				return d.ioc_code + " - " + parseFloat(d["y"+year]).toFixed(3) + " million medals/person\n"+d.country_name;}
 		);
 	
 	//fixes zooming in, changing year, then zooming/dragging
