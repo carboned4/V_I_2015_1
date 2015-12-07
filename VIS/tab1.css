@@ -4,13 +4,35 @@ h1 {
 }
 
 ul {
-list-style-type: none;
-    margin: 0;
-    padding: 0;
+    list-style-type: none;
+    margin-top: 12px;
+    padding-bottom: 9px;
+    padding-left: 4px;
+    border-bottom: 1px solid #d3d3d3;
 }
 
 li {
     display: inline;
+    border: 1px solid #d3d3d3;
+    padding: 10px 20px;
+    border-radius: 4px 4px 0 0;
+    background: #e6e6e6;
+    margin-right: 2px;
+    font-family: calibri, sans serif;
+    font-size: 12pt;
+    text-decoration: none;
+    color: black
+}
+
+.liselected{
+    border: 1px solid #aaaaaa;
+    border-bottom: 1px solid #eeeeee;
+    background: #eeeeee;
+}
+
+hr{
+    height: 1px;
+    background-color: #eeeeee;
 }
 
 .axis path, .axis line {
