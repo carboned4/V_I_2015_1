@@ -20,7 +20,6 @@ li {
     margin-right: 2px;
     font-family: calibri, sans serif;
     font-size: 12pt;
-    text-decoration: none;
     color: black
 }
 
@@ -30,9 +29,14 @@ li {
     background: #eeeeee;
 }
 
+a{
+    text-decoration: none;
+}
+
 hr{
-    height: 1px;
-    background-color: #eeeeee;
+    border-width: 0px;
+    padding-top: 1px;
+    background-color: #d3d3d3;
 }
 
 .axis path, .axis line {

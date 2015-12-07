@@ -482,6 +482,27 @@ function gen_bubbles() {
 	                   })
 		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
+		.on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals "+d.country_name;
+			console.log("tooltip: "+d.NOC);
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.style("position", "absolute")
+				.style("z-index", "10")
+				.style("visibility", "visible")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.attr("background-color","#999999")
+				.text(function(){return ttlabel;});
+		})
+		.on("mousemove", function(d){
+			console.log(event.pageX + "," + event.pageY);
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+		})
 	    .append("title")
 		.text(function(d)
 			{   if(!d[selectedMedals]) return d.NOC + " - 0 medals\n"+d.country_name;

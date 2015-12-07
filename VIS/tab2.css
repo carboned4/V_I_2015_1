@@ -3,6 +3,41 @@ h1 {
    font-family: calibri, arial, sans serif;
 }
 
+ul {
+    list-style-type: none;
+    margin-top: 12px;
+    padding-bottom: 9px;
+    padding-left: 4px;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+li {
+    display: inline;
+    border: 1px solid #d3d3d3;
+    padding: 10px 20px;
+    border-radius: 4px 4px 0 0;
+    background: #e6e6e6;
+    margin-right: 2px;
+    font-family: calibri, sans serif;
+    font-size: 12pt;
+    color: black
+}
+
+a{
+    text-decoration: none;
+}
+
+.liselected{
+    border: 1px solid #aaaaaa;
+    border-bottom: 1px solid #eeeeee;
+    background: #eeeeee;
+}
+
+hr{
+    border-width: 0px;
+    padding-top: 1px;
+    background-color: #d3d3d3;
+}
 
 .axis path, .axis line {
     fill: none;
@@ -68,15 +103,8 @@ p{
 	display: table-row;
 	font-family: calibri, arial, sans serif;
 }
-ul {
-list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
 
-li {
-    display: inline;
-}
+
 #amount{
 	font-family: calibri, sans serif;
     font-size: 12pt;
