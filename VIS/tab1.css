@@ -6,7 +6,7 @@ h1 {
 ul {
     list-style-type: none;
     margin-top: 12px;
-    padding-bottom: 9px;
+    padding-bottom: 10px;
     padding-left: 4px;
     border-bottom: 1px solid #d3d3d3;
 }
@@ -27,6 +27,27 @@ li {
     border: 1px solid #aaaaaa;
     border-bottom: 1px solid #eeeeee;
     background: #eeeeee;
+}
+
+.tooltip{
+	position: absolute;
+	z-index: 10;
+	background-color: #333333;
+	color: #FFFFFF;
+	opacity: 0.8;
+	font-family: calibri, sans serif;
+    font-size: 12pt;
+	border-radius: 3px;
+	border: 1px solid #d3d3d3;
+	padding: 4px;
+}
+
+#warpic{
+	position: absolute;
+	z-index: 10;
+	height: 300px;
+	left: 150px;
+	top:360px;
 }
 
 a{

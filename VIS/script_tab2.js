@@ -15,7 +15,13 @@ https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 
 var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
-var year_min, year_max;
+var year_min= 2008, year_max = 2008;
+
+var selectedMedals = "numberBronze";
+
+var doit;
+
+var mapdrawn = false;
 
 var merc;
 var projection;
@@ -30,19 +36,54 @@ var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminto
 "Shooting", "Skating", "Softball", "Table Tennis", "Taekwondo", "Tennis", "Triathlon",
 "Tug of War", "Volleyball", "Water Motorsports", "Weightlifting", "Wrestling"];
 
-var sportsChoicesElement;
-var sportsSelectElement;
-function createSportsDropdown(){
-	sportsChoicesElement = document.getElementById("sportschoices");
-	sportsSelectElement = sportsChoicesElement.appendChild(document.createElement("select"));
-	var kindofsport;
-	for(kindofsport in sportsChoices){
-		var child = document.createElement("option");
-		child.innerHTML = sportsChoices[kindofsport];
-		child.value = sportsChoices[kindofsport];
-		if(child.value == "Aquatics") child.selected= true;
-		sportsSelectElement.appendChild(child);
+function updateMedalsString(){
+	selectedMedals = "number";
+	if(document.getElementById("numberBronze").checked) selectedMedals+="Bronze";
+	if(document.getElementById("numberSilver").checked) selectedMedals+="Silver";
+	if(document.getElementById("numberGold").checked) selectedMedals+="Gold";
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
+}
+
+
+function startAnim(){
+	var a_min = $("#slider-range").slider("values",0);
+	var a_max = a_min; //these are a value 0-28
+	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",1,a_max);
+	year_max = year_min = 1896 + a_min*4;
+	$( "#amount" ).val(year_min + " - "+ year_max );
+	changeYear();
+	doit= setInterval(animate, 1000);
+}
+
+function stopAnim(){
+	clearInterval(doit);
+}
+
+function animate(){
+	if(year_max >= 2008){
+		clearInterval(doit);
+		year_max = year_min = 2008;
+		return;
 	}
+	var a_max = $("#slider-range").slider("values",1) +1;
+	var a_min = a_max; //these are a value 0-28
+	$("#slider-range").slider("values",1,a_max); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",0,a_min);
+	$( "#amount" ).val(year_min + " - "+ year_max );
+	year_max = year_min = 1896 + a_min*4;
+	changeYear();
+}
+
+function changeYear(){
+	var a_max = $("#slider-range").slider("values",1);
+	var a_min = a_max; //these are a value 0-28
+	year_max = year_min = 1896 + a_min*4;
+	shown_dataset = process_data(full_dataset);
+	gen_bars();
+	gen_bubbles();
 }
 
 $(function() {
@@ -55,6 +96,9 @@ $(function() {
         $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
 		year_min = 1896+ui.values[0]*4;
 		year_max = 1896+ui.values[1]*4;
+		shown_dataset = process_data(full_dataset);
+		gen_bars();
+		gen_bubbles();
       }
     });
     $( "#amount" ).val(($( "#slider-range" ).slider( "values", 0 )*4+1896) +
@@ -62,14 +106,184 @@ $(function() {
   });
 
 function startupscript(){
-	createSportsDropdown();
+	
 }
+
+/*adds all the sports into All Sports, by year and country*/
+function sumSports(unsummed_data){
+	var summed = new Array();
+	var entry;
+	var curryear;
+
+	//for each year, we count the number of medals of each country
+	for(curryear = year_min; curryear <= year_max; curryear +=4){
+		var sumsforthisyear = new Array();
+		var unsummedforthisyear = unsummed_data.filter(function(a){return a.Edition == curryear;});
+		//^here we have the data for each country in a certain year
+		//for each country-sport in this year, we add its medals to the country's count
+		for (entry in unsummedforthisyear){
+			var startedcounting = false;
+			//we check if we've already started counting for this country or not
+			for(countrythisyear in sumsforthisyear){
+				var blarow = sumsforthisyear[countrythisyear];
+				//we have started counting:
+				if(blarow.NOC == unsummedforthisyear[entry].NOC){
+					startedcounting = true;
+					blarow.numberBronze = parseInt(blarow.numberBronze) + parseInt(unsummedforthisyear[entry].numberBronze);
+					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + parseInt(unsummedforthisyear[entry].numberBronzeSilver);
+					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + parseInt(unsummedforthisyear[entry].numberBronzeSilverGold);
+					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + parseInt(unsummedforthisyear[entry].numberBronzeGold);
+					blarow.numberSilver = parseInt(blarow.numberSilver) + parseInt(unsummedforthisyear[entry].numberSilver);
+					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + parseInt(unsummedforthisyear[entry].numberSilverGold);
+					blarow.numberGold = parseInt(blarow.numberGold) + parseInt(unsummedforthisyear[entry].numberGold);
+					break;
+				}
+			}
+			//if we haven't started counting (because it doesn't exist in the counting):
+			if(!startedcounting){
+				sumsforthisyear.push({
+					Edition: unsummedforthisyear[entry].Edition,
+					NOC: unsummedforthisyear[entry].NOC,
+					Sport: "All Sports",
+					country_name: unsummedforthisyear[entry].country_name,
+					ioc_code: unsummedforthisyear[entry].ioc_code,
+					iso2_code: unsummedforthisyear[entry].iso2_code,
+					latitude: unsummedforthisyear[entry].latitude,
+					longitude: unsummedforthisyear[entry].longitude,
+					numberBronze: unsummedforthisyear[entry].numberBronze,
+					numberBronzeGold: unsummedforthisyear[entry].numberBronzeGold,
+					numberBronzeSilver: unsummedforthisyear[entry].numberBronzeSilver,
+					numberBronzeSilverGold: unsummedforthisyear[entry].numberBronzeSilverGold,
+					numberGold: unsummedforthisyear[entry].numberGold,
+					numberSilver: unsummedforthisyear[entry].numberSilver,
+					numberSilverGold: unsummedforthisyear[entry].numberSilverGold
+				});
+			}
+		}
+		for (entry in sumsforthisyear){
+			summed.push(sumsforthisyear[entry]);
+		}
+	
+	}
+	return summed;
+}
+
+/* adds all the medals of a country in the specified sport*/
+function sumYears(unsummed_data){
+	var summed = new Array();
+	var entry;
+	var i_sports;
+
+	//for each sport, we count the number of medals of each country
+	for(i_sports = 0; i_sports <= sportsChoices.length; i_sports +=1){
+		var sumsforthissport = new Array();
+		var unsummedforthissport = unsummed_data.filter(function(a){return a.Sport == sportsChoices[i_sports];});
+		//^here we have the data for each country for a certain sport (could be All Sports which counts more than one)
+		//for each country-year in this sport, we add its medals to the country's count
+		for (entry in unsummedforthissport){
+			//console.log(sportsChoices[i_sports] + sportsChoices.length + i_sports);
+			var startedcounting = false;
+			//we check if we've already started counting for this country or not
+			for(countrythissport in sumsforthissport){
+				var blarow = sumsforthissport[countrythissport];
+				//console.log(sportsChoices[i_sports]);
+				//we have started counting:
+				
+				if(blarow.NOC == unsummedforthissport[entry].NOC){
+					//console.log("update "+blarow.NOC + blarow.Sport);
+					startedcounting = true;
+					blarow.numberBronze = parseInt(blarow.numberBronze) + parseInt(unsummedforthissport[entry].numberBronze);
+					blarow.numberBronzeSilver = parseInt(blarow.numberBronzeSilver) + parseInt(unsummedforthissport[entry].numberBronzeSilver);
+					blarow.numberBronzeSilverGold = parseInt(blarow.numberBronzeSilverGold) + parseInt(unsummedforthissport[entry].numberBronzeSilverGold);
+					blarow.numberBronzeGold = parseInt(blarow.numberBronzeGold) + parseInt(unsummedforthissport[entry].numberBronzeGold);
+					blarow.numberSilver = parseInt(blarow.numberSilver) + parseInt(unsummedforthissport[entry].numberSilver);
+					blarow.numberSilverGold = parseInt(blarow.numberSilverGold) + parseInt(unsummedforthissport[entry].numberSilverGold);
+					blarow.numberGold = parseInt(blarow.numberGold) + parseInt(unsummedforthissport[entry].numberGold);
+					break;
+				}
+			}
+			//if we haven't started counting (because it doesn't exist in the counting):
+			if(!startedcounting){
+				//console.log("add"+unsummedforthissport[entry].NOC);
+				sumsforthissport.push({
+					Edition: year_min+"-"+year_max,
+					NOC: unsummedforthissport[entry].NOC,
+					Sport: unsummedforthissport[entry].Sport,
+					country_name: unsummedforthissport[entry].country_name,
+					ioc_code: unsummedforthissport[entry].ioc_code,
+					iso2_code: unsummedforthissport[entry].iso2_code,
+					latitude: unsummedforthissport[entry].latitude,
+					longitude: unsummedforthissport[entry].longitude,
+					numberBronze: unsummedforthissport[entry].numberBronze,
+					numberBronzeGold: unsummedforthissport[entry].numberBronzeGold,
+					numberBronzeSilver: unsummedforthissport[entry].numberBronzeSilver,
+					numberBronzeSilverGold: unsummedforthissport[entry].numberBronzeSilverGold,
+					numberGold: unsummedforthissport[entry].numberGold,
+					numberSilver: unsummedforthissport[entry].numberSilver,
+					numberSilverGold: unsummedforthissport[entry].numberSilverGold
+				});
+			}
+		}
+		for (entry in sumsforthissport){
+			summed.push(sumsforthissport[entry]);
+		}
+	}
+	return summed;
+}
+
+var testarray;
 
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
-	var return_dataset = data_in.sort(function(a, b){
-		return b.numberBronze - a.numberBronze;
+	//Year in range
+	var yearrange_data = data_in.filter(function(a){
+		return ((a.Edition <= year_max) && (a.Edition >= year_min));
 	});
+	//Sport
+	/*var sportfiltered_data;
+	if(selectedSport == "All Sports") sportfiltered_data = yearrange_data;
+	else{
+		sportfiltered_data = yearrange_data.filter(function(a){
+			return a.Sport == selectedSport;
+		});
+	}*/
+	//handle "all sports"
+	/*var summedsport_data;
+	if(selectedSport == "All Sports"){
+		summedsport_data = sumSports(yearrange_data); //previously sportfiltered_data
+		testarray = summedsport_data;
+	}
+	else
+		summedsport_data = yearrange_data; //previously sportfiltered_data
+	*/
+	/*create the sum of all sports, then concatenate it*/
+	var allsummed_data;
+	var summedsport_data = sumSports(yearrange_data);
+	allsummed_data = summedsport_data.concat(yearrange_data);
+	testarray = allsummed_data;
+	
+	//handle year ranges
+	var summedyear_data;
+	if(year_min < year_max){
+		summedyear_data = sumYears(allsummed_data);
+		//testarray = summedyear_data;
+	}
+	else
+		summedyear_data = allsummed_data;
+	
+	
+	//Remove zero elements
+	var unzeroed_data = summedyear_data.filter(function(a){ //remove zeros do tiago
+		return a[selectedMedals] > 0;
+	});
+	var return_dataset = unzeroed_data.sort(function(a, b){
+		return b[selectedMedals] - a[selectedMedals];
+	});
+	d3.selectAll(".tooltip").remove();
+	if((year_min == year_max) && (year_min==1940 || year_min == 1944 || year_min == 1916)){
+		document.getElementById("warpic").style.visibility = "visible";
+	}
+	else document.getElementById("warpic").style.visibility = "hidden";
 	return return_dataset;
 }
 
@@ -82,20 +296,19 @@ function process_chosenData(data_in){
 	return return_dataset;
 }
 
-d3.csv("medals_test1.csv", function (data) {
+d3.csv("medals_improved.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
-	
+	gen_bars();
 	gen_bubbles();
-	//gen_map();
+	
 })
 
 
 function gen_bars() {
-chosen_dataset = process_chosenData (shown_dataset);
+	chosen_dataset = process_chosenData (shown_dataset);
     var w = 800;
-    //var h = 400;
-	var bar_thickness = 20;
+    var bar_thickness = 20;
     var padding=30;
 	var between_bars = 10;
 	var bar_stroke_thickness = 2;
@@ -153,8 +366,21 @@ chosen_dataset = process_chosenData (shown_dataset);
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.NOC;})
-	    .append("title")
-		.text(function(d) { return d.NOC;});	//country identifier
+	    .on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals";
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+		});
 	
 	//make the medal number label
 	bars_enter.append("text").text(function(d) {if (!d.numberBronze) return 0; return d.numberBronze;})
@@ -273,10 +499,21 @@ function gen_bubbles() {
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
 	    .append("title")
-		.text(function(d)
-			{   if(!d.numberBronze) return d.NOC + " - 0 medals\n"+d.country_name;
-				return d.NOC + " - " + d.numberBronze + " medals\n"+d.country_name;}
-		);
+		.on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();
+		});
 		
 		
 		

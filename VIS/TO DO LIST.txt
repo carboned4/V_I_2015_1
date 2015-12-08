@@ -1,5 +1,4 @@
-TOOLTIPS 
 Line graph showing evolution on tab3
-Explosoes das guerras 
 CSS
 Sidebar com desportos (se houver tempo lol)
+comparação de países (in progress, by miguel)

@@ -297,6 +297,11 @@ function process_data(data_in){
 	var return_dataset = unzeroed_data.sort(function(a, b){
 		return b[selectedMedals] - a[selectedMedals];
 	});
+	d3.selectAll(".tooltip").remove();
+	if((year_min == year_max) && (year_min==1940 || year_min == 1944 || year_min == 1916)){
+		document.getElementById("warpic").style.visibility = "visible";
+	}
+	else document.getElementById("warpic").style.visibility = "hidden";
 	return return_dataset;
 }
 
@@ -338,11 +343,6 @@ function gen_bars() {
                          .range([0,shown_dataset.length*(bar_thickness+between_bars)]);
 
     
-
-	
-	console.log(d3.max(shown_dataset,function(d){
-							return d[selectedMedals];}));
-	
 	/*
 	parte em que se desenha as bubbles
 	*/
@@ -365,8 +365,21 @@ function gen_bars() {
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.NOC;})
-	    .append("title")
-		.text(function(d) { return d.NOC;});	//country identifier
+	    .on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals";
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+		});
 	
 	//make the medal number label
 	bars_enter.append("text").text(function(d) {if (!d[selectedMedals]) return 0; return d[selectedMedals];})
@@ -483,54 +496,22 @@ function gen_bubbles() {
 		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
 		.on("mouseover", function(d){
-			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals "+d.country_name;
-			console.log("tooltip: "+d.NOC);
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;
 			var ttid = "tt_"+d.NOC;
 			d3.select("body")
 				.append("div")
-				.style("position", "absolute")
-				.style("z-index", "10")
-				.style("visibility", "visible")
 				.attr("class","tooltip")
 				.attr("id",ttid)
-				.attr("background-color","#999999")
-				.text(function(){return ttlabel;});
+				.text(ttlabel);
 		})
 		.on("mousemove", function(d){
-			console.log(event.pageX + "," + event.pageY);
 			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
 		})
 		.on("mouseout", function(d){
-			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
-		})
-	    .append("title")
-		.text(function(d)
-			{   if(!d[selectedMedals]) return d.NOC + " - 0 medals\n"+d.country_name;
-				return d.NOC + " - " + d[selectedMedals] + " medals\n"+d.country_name;}
-		);
+			d3.select("#tt_"+d.NOC).remove();
+		});
 	
-	//make the medal number label
-	/*bubbles_enter.append("text").text(function(d) {
-						if (d[selectedMedals] < min_amount_for_label) return "";
-						return d[selectedMedals];
-		})
-		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude +1/zoom_multiplier])[1];
-	                   })
-	    .attr("x", function(d) {
-                          return projection([d.longitude-2.5/zoom_multiplier, d.latitude])[0];
-	                   })
-		.attr("auxy",function(d) {
-                          return d.latitude;
-	                   })
-	    .attr("auxx", function(d) {
-                          return d.longitude;
-	                   })
-		.attr("labelfor", function(d) {
-                          return d.NOC;
-	                   })
-		.attr("fill","white")
-		.attr("font-size",14/zoom_multiplier);*/
+	
 	
 	//fixes zooming in, changing year, then zooming/dragging
 	bubbles_enter.attr("transform", transformFromMap)
@@ -541,8 +522,7 @@ function gen_bubbles() {
     .on("zoom",function() {
 		var toApply = (zoom_multiplier == d3.event.scale ? 1 : d3.event.scale/zoom_multiplier); 
 		zoom_multiplier = d3.event.scale;
-		console.log(zoom_multiplier);
-        g.attr("transform","translate("+ 
+		g.attr("transform","translate("+ 
             d3.event.translate.join(",")+")scale("+d3.event.scale+")");
         g.selectAll("circle")
             .attr("d", path.projection(projection));
@@ -558,17 +538,7 @@ function gen_bubbles() {
 			.attr("stroke-width", function(){
 				return d3.select(this).attr("stroke-width")/toApply;
 			});
-		/*bubbles_enter.selectAll("text")
-            .attr("d", path.projection(projection))
-			.attr("x", function(){
-				return projection([parseInt(d3.select(this).attr("auxx"))-2.5/zoom_multiplier, 0])[0];
-			})
-			.attr("y", function(){
-				return projection([0, parseInt(d3.select(this).attr("auxy"))+1/zoom_multiplier])[1];
-			})
-			.style("font-size", function(){
-				return parseFloat(d3.select(this).style("font-size"))/toApply;
-			});*/
+		
 	});
 	
 	d3.select("#country").on("change", colorbarandbubbles);

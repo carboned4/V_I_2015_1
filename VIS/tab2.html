@@ -20,16 +20,15 @@
     </ul>
     <h1>Standings Comparison</h1>
 	<div id="fieldinput">
-		<div id="sportschoices">
+		<div id="sportschoices" onchange="changeSport()">
 		</div>
 		<br>
 		<br>
 		<div id="medalschoices">
-			<input type="checkbox" name="numberGold" value="numberGold">Gold</input>
-			<input type="checkbox" name="numberSilver" value="numberSilver">Silver</input>
-			<input checked type="checkbox" name="numberBronze" value="numberBronze">Bronze</input>
+			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" value="numberGold">Gold</input>
+			<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver"value="numberSilver">Silver</input>
+			<input checked type="checkbox" name="numberBronze" onchange="updateMedalsString()" id="numberBronze" value="numberBronze">Bronze</input>
 		</div>
-		
 		<div id="divfor2slider">
 			<p for="amount">Years:</label>
 			<input type="text" id="amount" readonly style="border:0;">
@@ -46,6 +45,7 @@
 	
     <div id="bubble_map"></div>
 	<div id="bar_chart"></div>
+	<img id="warpic" src="explosion.png" style="visiblity:hidden">
   </body>
 
 

@@ -146,8 +146,23 @@ function gen_bars() {
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.ioc_code;})
-	    .append("title")
-		.text(function(d) { return d.ioc_code;});	//country identifier
+	    .on("mouseover", function(d){
+			var ttlabel;
+			if(!d["y"+year]) ttlabel = d.ioc_code + " - 0 million medals/person";
+			else ttlabel = d.ioc_code + " - " + parseFloat(d["y"+year]).toFixed(3) + " million medals/person";
+			var ttid = "tt_"+d.ioc_code;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.ioc_code).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.ioc_code).remove();
+		});
 		
 	//make the medal number label
 	bars_enter.append("text").text(function(d) {if (!d["y"+year]) return 0; return parseFloat(d["y"+year]).toFixed(3);})
@@ -267,11 +282,23 @@ function gen_bubbles() {
 	                   })
 		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.ioc_code;})
-	    .append("title")
-		.text(function(d)
-			{   if(!d["y"+year]) return d.ioc_code + " - 0 million medals/person\n"+d.country_name;
-				return d.ioc_code + " - " + parseFloat(d["y"+year]).toFixed(3) + " million medals/person\n"+d.country_name;}
-		);
+	    .on("mouseover", function(d){
+			var ttlabel;
+			if(!d["y"+year]) ttlabel = d.ioc_code + " - 0 million medals/person - "+d.country_name;
+			else ttlabel = d.ioc_code + " - " + parseFloat(d["y"+year]).toFixed(3) + " million medals/person - "+d.country_name;
+			var ttid = "tt_"+d.ioc_code;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.ioc_code).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.ioc_code).remove();
+		});
 	
 	//fixes zooming in, changing year, then zooming/dragging
 	bubbles_enter.attr("transform", transformFromMap)
