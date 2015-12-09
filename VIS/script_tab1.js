@@ -395,8 +395,6 @@ function gen_bars() {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x", 0)
-		.append("title")
-		.text(function(d) { return d.NOC;});	//country identifier
 		
 	//exit?
 

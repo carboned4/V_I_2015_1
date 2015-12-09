@@ -14,6 +14,8 @@ https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
 var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
+var bubbles_dataset;
+var bars_dataset = new Array();
 
 var year_min= 2008, year_max = 2008;
 
@@ -25,8 +27,8 @@ var mapdrawn = false;
 
 var merc;
 var projection;
-var country1="asas";
-var country2= "Lol";
+var country1="Russia";
+var country2= "China";
 
 var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminton",
 "Baseball", "Basketball", "Basque Pelota", "Boxing", "Canoe / Kayak", "Cricket",
@@ -173,6 +175,7 @@ function sumYears(unsummed_data){
 	var summed = new Array();
 	var entry;
 	var i_sports;
+	
 
 	//for each sport, we count the number of medals of each country
 	for(i_sports = 0; i_sports <= sportsChoices.length; i_sports +=1){
@@ -236,77 +239,85 @@ var testarray;
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
 function process_data(data_in){
 	//Year in range
-	var yearrange_data = data_in.filter(function(a){
+	var bars_yearrange_data = data_in.filter(function(a){
 		return ((a.Edition <= year_max) && (a.Edition >= year_min));
 	});
-	//Sport
-	/*var sportfiltered_data;
-	if(selectedSport == "All Sports") sportfiltered_data = yearrange_data;
-	else{
-		sportfiltered_data = yearrange_data.filter(function(a){
-			return a.Sport == selectedSport;
-		});
-	}*/
-	//handle "all sports"
-	/*var summedsport_data;
-	if(selectedSport == "All Sports"){
-		summedsport_data = sumSports(yearrange_data); //previously sportfiltered_data
-		testarray = summedsport_data;
-	}
-	else
-		summedsport_data = yearrange_data; //previously sportfiltered_data
-	*/
+	
+	
+	var bars_summedsport_data; //will contain allsports and each sport (for all years separately)
+	var bubbles_summedsport_data; //will contain allsports (for all years separately)
 	/*create the sum of all sports, then concatenate it*/
-	var allsummed_data;
-	var summedsport_data = sumSports(yearrange_data);
-	allsummed_data = summedsport_data.concat(yearrange_data);
-	testarray = allsummed_data;
+	bubbles_summedsport_data = sumSports(bars_yearrange_data);
+	bars_summedsport_data = bubbles_summedsport_data.concat(bars_yearrange_data);
+	//testarray = bars_summedsport_data;
+	
+	//filter the countries for the bars
+	var bars_countries_summedsport_data = bars_summedsport_data.filter(function(d){
+		return ( (d.country_name == country1) || (d.country_name == country2) );
+	});
 	
 	//handle year ranges
-	var summedyear_data;
+	var bars_summedyear_data; //will contain all sports and each sport summed for the year range
+	var bubbles_summedyear_data; //will contain allsports summed for the year range
 	if(year_min < year_max){
-		summedyear_data = sumYears(allsummed_data);
-		//testarray = summedyear_data;
+		bars_summedyear_data = sumYears(bars_countries_summedsport_data);
+		bubbles_summedyear_data = sumYears(bubbles_summedsport_data);
 	}
-	else
-		summedyear_data = allsummed_data;
+	else{
+		bars_summedyear_data = bars_countries_summedsport_data;
+		bubbles_summedyear_data = bubbles_summedsport_data;
+	}
 	
+	//testarray = bubbles_summedyear_data;
 	
-	//Remove zero elements
-	var unzeroed_data = summedyear_data.filter(function(a){ //remove zeros do tiago
+	//Remove zero elements - só para as bubbles. acho que dá jeito ter zeros nas bars, ainda não sei
+	var bubbles_unzeroed_data = bubbles_summedyear_data.filter(function(a){ //remove zeros do tiago
 		return a[selectedMedals] > 0;
 	});
-	var return_dataset = unzeroed_data.sort(function(a, b){
+	//testarray = bubbles_unzeroed_data;
+	
+	//sort and put in the final arrays: bubbles_dataset, bars_dataset
+	bubbles_dataset = bubbles_unzeroed_data.sort(function(a, b){
 		return b[selectedMedals] - a[selectedMedals];
 	});
+	testarray = bubbles_dataset;
+	bars_dataset = bars_summedyear_data.sort(function(a, b){
+		return a.Sport.localeCompare(b.Sport);
+	});
+	
+	//guerras mundiais
 	d3.selectAll(".tooltip").remove();
 	if((year_min == year_max) && (year_min==1940 || year_min == 1944 || year_min == 1916)){
 		document.getElementById("warpic").style.visibility = "visible";
 	}
 	else document.getElementById("warpic").style.visibility = "hidden";
-	return return_dataset;
+	
+	return [bars_dataset, bubbles_dataset]; //agora temos 2 datasets por isso faz-se return num array de arrays,
+											//e fora da funcao mete-se nas vars: bubbles_dataset, bars_dataset
 }
 
-
+/*
 function process_chosenData(data_in){
 	var return_dataset = data_in.filter(function(pais){
 		return (pais.country_name == country1 || pais.country_name == country2);
 		
 	});
 	return return_dataset;
-}
+}*/
 
 d3.csv("medals_improved.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
+	//bars_dataset = shown_dataset[0];
+	//bubbles_dataset = shown_dataset[1];
+	
 	gen_bars();
 	gen_bubbles();
-	
 })
 
 
 function gen_bars() {
-	chosen_dataset = process_chosenData (shown_dataset);
+	//chosen_dataset = process_chosenData (shown_dataset);
     var w = 800;
     var bar_thickness = 20;
     var padding=30;
@@ -316,50 +327,45 @@ function gen_bars() {
 	var medal_label_shift_right = 20;
 
 
+	
 	d3.select("#bar_chart").selectAll("svg").remove();
     var svg = d3.select("#bar_chart")
                 .append("svg")
                 .attr("width",w)
-                .attr("height",60);
+                .attr("height",bars_dataset.length*(between_bars+bar_thickness));
 	
-    var hscale = d3.scale.linear()
-                         .domain([0,200])
-                         .range([0,w]);
+    var hscale = d3.scale.sqrt()
+                         .domain([0,d3.max(bars_dataset,function(d){
+							return parseInt(d[selectedMedals]);})])
+                         .range([0,w - bar_shift_right - medal_label_shift_right - 240]);
 
     var yscale = d3.scale.linear()
-                         .domain([0,chosen_dataset.length])
-                         .range([0,chosen_dataset.length*(bar_thickness+between_bars)]);
-
-    
-
+                         .domain([0,bars_dataset.length])
+                         .range([0,bars_dataset.length*(bar_thickness+between_bars)]);
 	
-
 	
 	/*
 	parte em que se desenha as bubbles
 	*/
-	var bars = svg.selectAll("g").remove();
-			
-	    var bars = svg.selectAll("g")
-		.data(chosen_dataset);
-		
-		var bars_enter = bars.enter().append("g");
-		
-   
-   
+	var bars = svg.selectAll("g")
+		.data(bars_dataset);
+	
+	var bars_enter = bars.enter().append("g");
+	
 	//make the bars
 	bars_enter.append("rect").attr("height",bar_thickness)
 	    .attr("width",function(d) {
-						if(!d.numberBronze) return hscale(0.5); //for a short bar
-						return hscale(d.numberBronze); //medals shown
+						if(d[selectedMedals] == 0) return 0.5; //for a short bar
+						return hscale(d[selectedMedals]); //medals shown
 	                   })
-	    .attr("fill",function(d) { console.log("im here");
-									if(d.country_name==country1)
-									return "#66FF66";
-								   else if(d.country_name==country2)
-									return "red";
-									else return "rgb(0,150,255)";
-								})	     
+	    .attr("fill",function(d){
+						if(d.country_name==country1)
+							return "#66FF66";
+						else if(d.country_name==country2)
+							return "red";
+						else
+							return "rgb(0,150,255)";
+						})	     
 	    .attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
@@ -383,35 +389,32 @@ function gen_bars() {
 		});
 	
 	//make the medal number label
-	bars_enter.append("text").text(function(d) {if (!d.numberBronze) return 0; return d.numberBronze;})
+	bars_enter.append("text").text(function(d) {if (!d[selectedMedals]) return 0; return d[selectedMedals];})
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x", function(d){
-							return bar_shift_right + bar_stroke_thickness/2 + hscale(d.numberBronze) + medal_label_shift_right});
+							return bar_shift_right + bar_stroke_thickness/2 + hscale(d[selectedMedals]) + medal_label_shift_right});
 	
-	//make the country name label
-	bars_enter.append("text").text(function(d) {return d.country_name;})
+	//make the sport name label
+	bars_enter.append("text").text(function(d) {return d.Sport;})
 		.attr("y",function(d, i) {
                           return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
 	                   })
-	    .attr("x", 0)
-		.append("title")
-		.text(function(d) { return d.NOC;});	//country identifier
-		
-		
-
-		
-		
+	    .attr("x", 0);
+	
 	//exit?
     bars.exit().remove();
 	
 }
 
 
+var bubblesvg;
+var path;
+var projection;
 var zoom_multiplier = 1;
+var g;
 function gen_bubbles() {
-	
 	
 	var w = 600;
     var h = 300;
@@ -425,24 +428,20 @@ function gen_bubbles() {
 	var min_amount_for_label = 10;
 	var radius_for_zero = 0.5
 	
-	var projection = d3.geo.mercator()
-		.center([0,0])
-		.translate([280,180])
-		.scale(100);
-	var path = d3.geo.path()
-		.projection(projection);
-
 	
-    var svg = d3.select("#bubble_map")
-                .append("svg")
-                .attr("width",w)
-                .attr("height",h);
+	
+    d3.selectAll(".bubble").remove();
+	if(!mapdrawn){
+			bubblesvg = d3.select("#bubble_map")
+			.append("svg")
+			.attr("width",w)
+			.attr("height",h);
+	}
 	
 
-	
     var radiusscale = d3.scale.log()
-						.domain([radius_for_zero*0.9,d3.max(shown_dataset,function(d){
-							return d.numberBronze;})])
+						.domain([radius_for_zero*0.9,d3.max(bubbles_dataset,function(d){
+							return parseInt(d[selectedMedals]);})])
                          .range([0,max_radius]);
 	
     var yscale = d3.scale.linear()
@@ -453,52 +452,55 @@ function gen_bubbles() {
                          .domain([-180,180])
                          .range([0,w]);
 	
-	
-	var g = svg.append("g");
-	// load and display the World
-	d3.json("topojson.v0.min.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
-    .enter()
-      .append("path")
-      .attr("d", path)
-	});
-	
-	
+	projection = d3.geo.mercator()
+		.center([0,0])
+		.translate([280,180])
+		.scale(100);
+	path = d3.geo.path()
+		.projection(projection);
+
+		
+	if(!mapdrawn){
+		g = bubblesvg.append("g");
+		// load and display the World
+		d3.json("topojson.v0.min.json", function(error, topology) {
+		g.selectAll("path")
+		  .data(topojson.object(topology, topology.objects.countries)
+			  .geometries)
+		.enter()
+		  .append("path")
+		  .attr("d", path)
+		});
+		mapdrawn = true;
+	}
 	/*
 	parte em que se desenha
 	*/
-    var bubbles = svg.selectAll("s")
-		.data(shown_dataset);
-	
+    var bubbles = bubblesvg.selectAll("g.hack") //remove the first g element (map)
+		.data(bubbles_dataset);
+		
 	var bubbles_enter = bubbles.enter().append("g");
-	   	var toggleColor = (function(){
-		var currentColor = "rgb(0,150,255)";
-    return function(){
-        if(currentColor=="rgb(0,150,255)")
-		currentColor = "magenta";
-		else currentColor = "rgb(0,150,255)";
-        d3.select(this).style("fill", currentColor);
-    }
-})();
-	   
+       
+	var transformFromMap = g.attr("transform");
 	//make the bubbles
-	bubbles_enter.append("circle")
-	    .attr("r",function(d) {
-                          if(!d.numberBronze) return radiusscale(radius_for_zero);
-						  return radiusscale(d.numberBronze)/zoom_multiplier; //medals shown
+	bubbles_enter.attr("class", "bubble")
+	    .append("circle")
+	    .attr("r",function(d){
+                          if(!d[selectedMedals]) return radiusscale(radius_for_zero);
+						  return radiusscale(d[selectedMedals])/zoom_multiplier; //medals shown
 	                   })
-	    .style("fill","rgb(0,150,255)")			
-	    .attr("cy",function(d) {
+	    .attr("fill",function(d){	if(d.country_name==country1) return "#66FF66";
+									else if(d.country_name==country2) return "red";
+									else return "rgb(0,150,255)"; })	     
+	    //.on("click", colorbars)
+	    .attr("cy",function(d){
                           return projection([d.longitude,d.latitude])[1];
 	                   })
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
-		.attr("stroke-width",3).attr("stroke","black")
+		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
-	    .append("title")
 		.on("mouseover", function(d){
 			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;
 			var ttid = "tt_"+d.NOC;
@@ -516,27 +518,9 @@ function gen_bubbles() {
 		});
 		
 		
-		
-
-
-   // now depending selection, draw a colored rectangle.
-
-	
-	//make the medal number label
-	/*bubbles_enter.append("text").text(function(d) {
-						if (d.numberBronze < min_amount_for_label) return "";
-						return d.numberBronze;
-		})
-		.attr("y",function(d) {
-                          return projection([d.longitude, d.latitude+1])[1];
-	                   })
-	    .attr("x", function(d) {
-                          return projection([d.longitude-2.5, d.latitude])[0];
-	                   })
-		.attr("fill","white");2*/
-	bubbles.exit().remove();
-	
-		
+	//fixes zooming in, changing year, then zooming/dragging
+	bubbles_enter.attr("transform", transformFromMap)
+	.attr("d", path.projection(projection));	
 		
 		
 	
@@ -544,8 +528,7 @@ function gen_bubbles() {
     .on("zoom",function() {
 		var toApply = (zoom_multiplier == d3.event.scale ? 1 : d3.event.scale/zoom_multiplier); 
 		zoom_multiplier = d3.event.scale;
-		console.log(zoom_multiplier);
-        g.attr("transform","translate("+ 
+		g.attr("transform","translate("+ 
             d3.event.translate.join(",")+")scale("+d3.event.scale+")");
         g.selectAll("circle")
             .attr("d", path.projection(projection));
@@ -561,27 +544,12 @@ function gen_bubbles() {
 			.attr("stroke-width", function(){
 				return d3.select(this).attr("stroke-width")/toApply;
 			});
-		bubbles_enter.selectAll("text")
-            .attr("d", path.projection(projection))
-			.style("font-size", function(){
-				return parseFloat(d3.select(this).style("font-size"))/toApply;
-			})/*
-			.attr("y", function(d) {
-				
-				return projection([d.longitude, d.latitude+1-1/toApply])[1];
-	                   })
-			.attr("x", function(d) {
-				
-				return projection([d.longitude-2.5+2.5/toApply, d.latitude])[0];
-	                   })*/;
+		
 	});
-	
 			 // Wait for input   
-d3.selectAll("input").on("change", transition);
+	d3.selectAll("input").on("change", transition);
 	//exit?
-	svg.call(zoom);
-	
-	
+	bubblesvg.call(zoom);
 }
 
 function getNOCforName(nametofind){
@@ -594,16 +562,19 @@ function getNOCforName(nametofind){
 	return null;
 }
 
+var previousCountry1 = "";
+var previousCountry2 = "";
 function transition() {
-var previousCountry1 = country1;
-var previousCountry2 = country2;
-country1=document.getElementById('country1').value;
-country2=document.getElementById('country2').value;
+	previousCountry1 = country1;
+	previousCountry2 = country2;
+	country1=document.getElementById('country1').value;
+	country2=document.getElementById('country2').value;
 	d3.select("#bubble_"+getNOCforName(previousCountry1)).style("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry2)).style("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(country1)).style("fill","#66FF66");
 	d3.select("#bubble_"+getNOCforName(country2)).style("fill","red");
-	gen_bars();
+	
+	process_data(full_dataset);
 
 	return;
 	

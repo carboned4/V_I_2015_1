@@ -45,9 +45,9 @@ li {
 #warpic{
 	position: absolute;
 	z-index: 10;
-	height: 300px;
+	width: 300px;
 	left: 150px;
-	top:360px;
+	top:440px;
 }
 
 a{
