@@ -274,14 +274,19 @@ function process_data(data_in){
 	var bubbles_unzeroed_data = bubbles_summedyear_data.filter(function(a){ //remove zeros do tiago
 		return a[selectedMedals] > 0;
 	});
+
+	var bars_unzeroed_data = bars_summedyear_data.filter(function(a){ //remove zeros do tiago
+		return a[selectedMedals] > 0;
+	});
 	//testarray = bubbles_unzeroed_data;
 	
 	//sort and put in the final arrays: bubbles_dataset, bars_dataset
 	bubbles_dataset = bubbles_unzeroed_data.sort(function(a, b){
 		return b[selectedMedals] - a[selectedMedals];
 	});
+
 	testarray = bubbles_dataset;
-	bars_dataset = bars_summedyear_data.sort(function(a, b){
+	bars_dataset = bars_unzeroed_data.sort(function(a, b){
 		return a.Sport.localeCompare(b.Sport);
 	});
 	
@@ -315,9 +320,10 @@ d3.csv("medals_improved.csv", function (data) {
 	gen_bubbles();
 })
 
-
+var current_sports;
 function gen_bars() {
 	//chosen_dataset = process_chosenData (shown_dataset);
+	current_sports = [];
     var w = 800;
     var bar_thickness = 20;
     var padding=30;
@@ -325,7 +331,18 @@ function gen_bars() {
 	var bar_stroke_thickness = 2;
 	var bar_shift_right = 200;
 	var medal_label_shift_right = 20;
+	for(el in bars_dataset){
+ 	var possibleSport = bars_dataset[el].Sport;
+ 	var found = false;
 
+ 	for(fl in current_sports)
+  		if(possibleSport == current_sports[fl]){
+   			found = true;
+  	 		break;
+  		}
+	if(!found)
+		current_sports.push(possibleSport);
+	}	
 
 	
 	d3.select("#bar_chart").selectAll("svg").remove();
@@ -337,7 +354,7 @@ function gen_bars() {
     var hscale = d3.scale.sqrt()
                          .domain([0,d3.max(bars_dataset,function(d){
 							return parseInt(d[selectedMedals]);})])
-                         .range([0,w - bar_shift_right - medal_label_shift_right - 240]);
+                         .range([0,180]);
 
     var yscale = d3.scale.linear()
                          .domain([0,bars_dataset.length])
@@ -366,14 +383,18 @@ function gen_bars() {
 						else
 							return "rgb(0,150,255)";
 						})	     
-	    .attr("y",function(d, i) {
-                          return bar_stroke_thickness/2 +yscale(i);
+	    .attr("y",function(d) {
+                          return bar_stroke_thickness/2 +yscale(current_sports.indexOf(d.Sport));
 	                   })
-	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
+	    .attr("x",function(d) {
+                          	if(d.country_name==country1)
+							return 350 - d3.select(this).attr("width");
+						else return 360;
+	                   })
 		.attr("stroke-width",3).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.NOC;})
 	    .on("mouseover", function(d){
-			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals";
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;
 			var ttid = "tt_"+d.NOC;
 			d3.select("body")
 				.append("div")
@@ -390,18 +411,21 @@ function gen_bars() {
 	
 	//make the medal number label
 	bars_enter.append("text").text(function(d) {if (!d[selectedMedals]) return 0; return d[selectedMedals];})
-		.attr("y",function(d, i) {
-                          return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
+		.attr("y",function(d) {
+                          return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(current_sports.indexOf(d.Sport));
 	                   })
 	    .attr("x", function(d){
-							return bar_shift_right + bar_stroke_thickness/2 + hscale(d[selectedMedals]) + medal_label_shift_right});
+	    						if(d.country_name==country1)
+							return 135;
+						else return 550 ;
+					});
 	
 	//make the sport name label
 	bars_enter.append("text").text(function(d) {return d.Sport;})
-		.attr("y",function(d, i) {
-                          return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(i);
+		.attr("y",function(d) {
+                          return bar_thickness*0.75 + bar_stroke_thickness/2 +yscale(current_sports.indexOf(d.Sport));
 	                   })
-	    .attr("x", 0);
+	    .attr("x", 10);
 	
 	//exit?
     bars.exit().remove();
@@ -575,7 +599,8 @@ function transition() {
 	d3.select("#bubble_"+getNOCforName(country2)).style("fill","red");
 	
 	process_data(full_dataset);
-
+	gen_bubbles();
+	gen_bars();
 	return;
 	
 }
