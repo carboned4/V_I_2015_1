@@ -17,7 +17,7 @@ http://bl.ocks.org/biovisualize/1016860
 http://bl.ocks.org/ilyabo/1373263
 */
 
-var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
+var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year_min = 2008, year_max = 2008;
 
@@ -73,6 +73,7 @@ function changeSport(){
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	changeCountry();
 }
 
 function startAnim(){
@@ -113,6 +114,28 @@ function changeYear(){
 	gen_bars();
 	gen_bubbles();
 }
+
+
+function changeCountry(){
+searchedCountry = document.getElementById("country").value;
+line_dataset = process_line(full_dataset);
+gen_line();
+}
+
+function process_line(data_in){
+	var unfiltered_data = data_in.filter(function(a){
+		if(a["country_name"] == searchedCountry && a["Sport"] == selectedSport ){
+		
+		return a["numberBronzeSilverGold"];
+		}
+		else return;
+	});
+	var return_dataset = unfiltered_data.sort(function(a, b){
+		return  a["Edition"] - b["Edition"] ;
+	});
+	return return_dataset;
+}
+
 
 $(function() {
     $( "#slider-range" ).slider({
@@ -508,8 +531,7 @@ function gen_bubbles() {
 		.on("mouseout", function(d){
 			d3.select("#tt_"+d.NOC).remove();
 		});
-	
-	
+
 	
 	//fixes zooming in, changing year, then zooming/dragging
 	bubbles_enter.attr("transform", transformFromMap)
@@ -542,6 +564,78 @@ function gen_bubbles() {
 	d3.select("#country").on("change", colorbarandbubbles);
 	bubblesvg.call(zoom);
 	
+}
+
+
+function gen_line() {
+    var w = 650;
+    var h = 400;
+	var line_thickness = 20;
+    var padding=30;
+	var between_lines = 10;
+	var line_stroke_thickness = 2;
+	var line_shift_right = 200;
+	var medal_label_shift_right = 20;
+	var yearline = 1960;
+	var dataSize = line_dataset.length;
+	var maxNumber=0;
+
+	for(var i =0; i<dataSize;i++){
+		if(maxNumber < line_dataset[i]["numberBronzeSilverGold"])
+			maxNumber = line_dataset[i]["numberBronzeSilverGold"]
+console.log(maxNumber);
+}
+		d3.select("#line_chart").selectAll("svg").remove();
+    var svg = d3.select("#line_chart")
+                .append("svg")
+                .attr("width",w)
+                .attr("height",h);
+
+	
+    var xscale = d3.scale.linear()
+                        .domain([line_dataset[0]["Edition"],line_dataset[dataSize-1]["Edition"]])
+                        .range([32,w]);
+
+    var yscale = d3.scale.linear()
+                         .domain([0,maxNumber])
+                         .range([h-30,30]);
+
+    
+	var xAxis = d3.svg.axis()
+    .scale(xscale);
+  
+	var yAxis = d3.svg.axis()
+    .scale(yscale)
+	.orient("left");
+	
+	svg.append("svg:g")
+	.attr("class","axis")
+	.attr("transform", "translate(0,370)")
+    .call(xAxis);
+
+    svg.append("svg:g")
+    .attr("class","axis")
+    .attr("transform", "translate(30,0)")
+    .call(yAxis);
+
+
+    var lineGen = d3.svg.line()
+  	.x(function(d) {
+    return xscale(d.Edition);
+  })
+  .y(function(d) {
+    return yscale(d.numberBronzeSilverGold);
+  });
+ 
+ 
+
+
+svg.append('svg:path')
+  .attr('d', lineGen(line_dataset))
+  .style('stroke', 'red')
+  .style('stroke-width', 2)
+  .style("fill", "none");
+
 }
 
 function getNOCforName(nametofind){
