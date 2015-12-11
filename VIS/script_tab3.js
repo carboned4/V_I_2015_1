@@ -49,9 +49,9 @@ function updateYearLabel(){
 }
 
 function changeCountry(){
-searchedCountry = document.getElementById("country").value;
-line_dataset = process_line(full_dataset);
-gen_line();
+	searchedCountry = document.getElementById("country").value;
+	line_dataset = process_line(full_dataset);
+	gen_line();
 }
 
 
@@ -365,7 +365,7 @@ function gen_bubbles() {
 
 function gen_line() {
     var w = 600;
-    var h = 200;
+    var h = 400;
 	var line_thickness = 20;
     var padding=30;
 	var between_lines = 10;
@@ -383,31 +383,54 @@ function gen_line() {
 	
 	var maxforcountry = 0;
 	var lil = line_dataset[0];
-	if(lil) for(var yearpoint = 1964; yearpoint <= 2008; yearpoint+=4){
-		var maxattempt = lil["y"+yearpoint];
+	if(lil) for(var yearpoint = 1960; yearpoint <= 2008; yearpoint+=4){
+		var maxattempt = parseFloat(lil["y"+yearpoint]);
 		if (maxattempt > maxforcountry) maxforcountry = maxattempt;
 	}
-	
+   console.log("max: "+maxforcountry);
     var xscale = d3.scale.linear()
                         .domain([1960,2008])
-                        .range([0,500]);
+                        .range([32,w]);
 
-    var yscale = d3.scale.linear()
+    var yscale = d3.scale.sqrt()
                          .domain([0,maxforcountry])
-                         .range([h-40,0]);
-
-    
+                         .range([h-30,0]);
+						 /*
+						 sqrt()
+                        .domain([
+						d3.min(shown_dataset,function(d){
+							return parseFloat(d["y"+year]);})
+						,
+						d3.max(shown_dataset,function(d){
+							return parseFloat(d["y"+year]);})
+						])
+                        .range([0,w - bar_shift_right - medal_label_shift_right - 100]);
+*/
 	var xAxis = d3.svg.axis()
-    .scale(xscale);
+	.tickValues(d3.range(1960, 2009,4))
+	.tickFormat(d3.format("d"))
+	.scale(xscale);
   
 	var yAxis = d3.svg.axis()
     .scale(yscale)
-	.orient("left");
+	.orient("left")
+	.tickSize(0)
+	.tickValues(function(){
+		if(maxforcountry > 40) return [0.5,1,2,5,10,20,40,120];
+		else if (maxforcountry < 2) return [0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else if (maxforcountry < 10) return [0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else return [0.1,0.5,1,2,5,10,20,40,120]; //5 a 40
+	})
+	.tickFormat(d3.format("g"));
 	
-	svg.append("svg:g").attr("transform", "translate(30,"+(h-20)+")")
-    .call(xAxis);
+	svg.append("svg:g")
+	.attr("class","axis")
+    .attr("transform", "translate(0,"+(h-30)+")")
+	.call(xAxis);
 	
-	svg.append("svg:g").attr("transform", "translate(30,20)")
+	svg.append("svg:g")
+	.attr("class","axis")
+	.attr("transform", "translate(30,0)")
 	.call(yAxis);
 	
 	var pathstring ="";
@@ -416,13 +439,13 @@ function gen_line() {
 		pathstring += " "+xscale(yearpoint)+","+yscale(lel ? lel["y"+yearpoint] : 0)+" ";
 	}
 	pathstring += "";
-	console.log(pathstring);
+	//console.log(pathstring);
 		
-	svg.attr("transform","translate(40,40)").append('svg:polyline')
+	svg.append('svg:polyline')
 		.attr('points', pathstring)
-		.attr('stroke', 'green')
-		.attr('stroke-width', 2)
-		.attr('fill', 'none');
+		.style('stroke', 'red')
+		.style('stroke-width', 2)
+		.style('fill', 'none');
 }
 
 
@@ -460,6 +483,9 @@ function colorbars(){
 	previousCountry = getNameforNOC(bartohighlightID);
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
+	searchedCountry = previousCountry;
+	line_dataset = process_line(full_dataset);
+	gen_line();
 	return;
 }
 
@@ -472,6 +498,9 @@ function colorbubbles(){
 	previousCountry = getNameforNOC(bubbletohighlightID);
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
+	searchedCountry = previousCountry;
+	line_dataset = process_line(full_dataset);
+	gen_line();
 	return;
 }
 

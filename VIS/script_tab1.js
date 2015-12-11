@@ -597,7 +597,7 @@ function gen_line() {
                         .domain([line_dataset[0]["Edition"],line_dataset[dataSize-1]["Edition"]])
                         .range([32,w]);
 
-    var yscale = d3.scale.linear()
+    var yscale = d3.scale.sqrt()
                          .domain([0,maxNumber])
                          .range([h-30,30]);
 
@@ -686,6 +686,9 @@ function colorbars(){
 	previousCountry = getNameforNOC(bartohighlightID);
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
+	searchedCountry = previousCountry;
+	line_dataset = process_line(full_dataset);
+	gen_line();
 	return;
 }
 
@@ -698,6 +701,9 @@ function colorbubbles(){
 	previousCountry = getNameforNOC(bubbletohighlightID);
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
+	searchedCountry = previousCountry;
+	line_dataset = process_line(full_dataset);
+	gen_line();
 	return;
 }
 

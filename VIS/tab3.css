@@ -52,17 +52,6 @@ hr{
     background-color: #d3d3d3;
 }
 
-.aaxis path {
-    fill: none;
-    stroke: #777;
-    shape-rendering: crispEdges;
-}
-.aaxis text {
-    font-family: Lato;
-    font-size: 13px;
-}
-
-
 .axis path, .axis line {
     fill: none;
     stroke: black;
