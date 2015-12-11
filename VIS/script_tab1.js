@@ -66,6 +66,7 @@ function updateMedalsString(){
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	gen_line();
 }
 
 function changeSport(){
@@ -126,7 +127,7 @@ function process_line(data_in){
 	var unfiltered_data = data_in.filter(function(a){
 		if(a["country_name"] == searchedCountry && a["Sport"] == selectedSport ){
 		
-		return a["numberBronzeSilverGold"];
+		return a[selectedMedals];
 		}
 		else return;
 	});
@@ -581,11 +582,9 @@ function gen_line() {
 	var yearline = 1960;
 	var dataSize = line_dataset.length;
 	var maxNumber=0;
-	console.log("empezar");
 	for(var i =0; i<dataSize;i++){
-		if(maxNumber < parseInt(line_dataset[i]["numberBronzeSilverGold"]))
-			maxNumber = parseInt(line_dataset[i]["numberBronzeSilverGold"]);
-console.log(maxNumber);
+		if(maxNumber < parseInt(line_dataset[i][selectedMedals]))
+			maxNumber = parseInt(line_dataset[i][selectedMedals]);
 }
 		d3.select("#line_chart").selectAll("svg").remove();
     var svg = d3.select("#line_chart")
@@ -626,17 +625,30 @@ console.log(maxNumber);
     return xscale(d.Edition);
   })
   .y(function(d) {
-    return yscale(d.numberBronzeSilverGold);
+    return yscale(d[selectedMedals]);
   });
  
  
-
 
 svg.append('svg:path')
   .attr('d', lineGen(line_dataset))
   .style('stroke', 'red')
   .style('stroke-width', 2)
   .style("fill", "none");
+  
+
+
+  svg.selectAll("circle").data(line_dataset).enter()
+  .append('svg:circle')
+  .attr("cx", function(d) {
+                          return xscale(d.Edition);
+	                   })
+  .attr("cy", function(d) {
+                          return  yscale(d[selectedMedals]);
+	                   })
+  .attr("r",5)
+  .style("fill","red")
+  .on("click", function (d) {goToYear(d.Edition)});
 
 }
 
@@ -700,4 +712,18 @@ function colorbarandbubbles(){
 
 		
 	return;
+}
+
+function goToYear(edition){
+	for(var i=0;i<line_dataset.length;i++){
+		if(line_dataset[i]["Edition"]==edition){
+			console.log(parseInt(edition));
+			year_min=parseInt(edition);
+			year_max=parseInt(edition);
+			$("#slider-range").slider("values",1,parseInt((edition-1896)/4)); //set both sliders to the minimum slider
+			$("#slider-range").slider("values",0,parseInt((edition-1896)/4));
+			$( "#amount" ).val(year_min + " - "+ year_max );
+			changeYear();
+		}		
+	}
 }
