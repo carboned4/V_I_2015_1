@@ -314,6 +314,12 @@ function gen_bubbles() {
 				.attr("class","tooltip")
 				.attr("id",ttid)
 				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.ioc_code).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.ioc_code).remove();
 		});
 	
 	
