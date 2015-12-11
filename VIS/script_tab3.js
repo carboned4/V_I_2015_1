@@ -13,7 +13,7 @@ http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
-var dataset, full_dataset, shown_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
+var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year = 1960;
 
@@ -48,14 +48,21 @@ function updateYearLabel(){
 	document.getElementById("yearelementtowrite").innerHTML = 1960+yearel.value*4;
 }
 
+function changeCountry(){
+searchedCountry = document.getElementById("country").value;
+line_dataset = process_line(shown_dataset);
+}
+
 
 function changeYear(){
 	var yearel = document.getElementById("singleyearslider");
 	year = 1960+yearel.value*4;
 	document.getElementById("yearelementtowrite").innerHTML	=year;
 	shown_dataset = process_data(full_dataset);
+	line_dataset = process_line(shown_dataset);
 	gen_bars();
 	gen_bubbles();
+	gen_line();
 }
 
 
@@ -74,6 +81,21 @@ function process_data(data_in){
 	});
 	return return_dataset;
 }
+
+function process_line(data_in){
+	var unfiltered_data = data_in.filter(function(a){
+		if(a["country_name"] == searchedCountry){
+		
+		return a["y"+year];
+		}
+		else return;
+	});
+	var return_dataset = unfiltered_data.sort(function(a, b){
+		return b["y"+year] - a["y"+year];
+	});
+	return return_dataset;
+}
+
 
 d3.csv("coef.csv", function (data) {
     full_dataset = data;
@@ -292,13 +314,8 @@ function gen_bubbles() {
 				.attr("class","tooltip")
 				.attr("id",ttid)
 				.text(ttlabel);
-		})
-		.on("mousemove", function(d){
-			d3.select("#tt_"+d.ioc_code).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-		})
-		.on("mouseout", function(d){
-			d3.select("#tt_"+d.ioc_code).remove();
 		});
+	
 	
 	//fixes zooming in, changing year, then zooming/dragging
 	bubbles_enter.attr("transform", transformFromMap)
@@ -339,6 +356,47 @@ function gen_bubbles() {
 	bubblesvg.call(zoom);
 	
 }
+
+function gen_line() {
+    var w = 600;
+    //var h = 400;
+	var line_thickness = 20;
+    var padding=30;
+	var between_lines = 10;
+	var line_stroke_thickness = 2;
+	var line_shift_right = 200;
+	var medal_label_shift_right = 20;
+
+
+		d3.select("#line_chart").selectAll("svg").remove();
+    var svg = d3.select("#line_chart")
+                .append("svg")
+                .attr("width",w)
+                .attr("height",shown_dataset.length*(between_lines+line_thickness));
+	
+	
+	
+    var xscale = d3.scale.linear()
+                        .domain([1960,2008])
+                        .range([0,300]);
+
+    var yscale = d3.scale.linear()
+                         .domain([0,13])
+                         .range([0,100]);
+
+    
+	var xAxis = d3.svg.axis()
+    .scale(xscale);
+  
+	var yAxis = d3.svg.axis()
+    .scale(yscale);
+	
+	
+	svg.append("svg:g")
+    .call(xAxis);
+	
+}
+
 
 function getNOCforName(nametofind){
 	for(el in shown_dataset){
