@@ -50,7 +50,8 @@ function updateYearLabel(){
 
 function changeCountry(){
 searchedCountry = document.getElementById("country").value;
-line_dataset = process_line(shown_dataset);
+line_dataset = process_line(full_dataset);
+gen_line();
 }
 
 
@@ -59,16 +60,15 @@ function changeYear(){
 	year = 1960+yearel.value*4;
 	document.getElementById("yearelementtowrite").innerHTML	=year;
 	shown_dataset = process_data(full_dataset);
-	line_dataset = process_line(shown_dataset);
 	gen_bars();
 	gen_bubbles();
-	gen_line();
 }
 
 
 function startupscript(){
 	document.getElementById("singleyearslider").value=0;
 	changeYear();
+	gen_line();
 }
 	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
@@ -365,42 +365,64 @@ function gen_bubbles() {
 
 function gen_line() {
     var w = 600;
-    //var h = 400;
+    var h = 200;
 	var line_thickness = 20;
     var padding=30;
 	var between_lines = 10;
 	var line_stroke_thickness = 2;
 	var line_shift_right = 200;
 	var medal_label_shift_right = 20;
+	var yearline = 1960;
 
 
 		d3.select("#line_chart").selectAll("svg").remove();
     var svg = d3.select("#line_chart")
                 .append("svg")
                 .attr("width",w)
-                .attr("height",shown_dataset.length*(between_lines+line_thickness));
+                .attr("height",h);
 	
-	
+	var maxforcountry = 0;
+	var lil = line_dataset[0];
+	if(lil) for(var yearpoint = 1964; yearpoint <= 2008; yearpoint+=4){
+		var maxattempt = lil["y"+yearpoint];
+		if (maxattempt > maxforcountry) maxforcountry = maxattempt;
+	}
 	
     var xscale = d3.scale.linear()
                         .domain([1960,2008])
-                        .range([0,300]);
+                        .range([0,500]);
 
     var yscale = d3.scale.linear()
-                         .domain([0,13])
-                         .range([0,100]);
+                         .domain([0,maxforcountry])
+                         .range([h-40,0]);
 
     
 	var xAxis = d3.svg.axis()
     .scale(xscale);
   
 	var yAxis = d3.svg.axis()
-    .scale(yscale);
+    .scale(yscale)
+	.orient("left");
 	
-	
-	svg.append("svg:g")
+	svg.append("svg:g").attr("transform", "translate(30,"+(h-20)+")")
     .call(xAxis);
 	
+	svg.append("svg:g").attr("transform", "translate(30,20)")
+	.call(yAxis);
+	
+	var pathstring ="";
+	for(var yearpoint = 1960; yearpoint <= 2008; yearpoint+=4){
+		var lel = line_dataset[0];
+		pathstring += " "+xscale(yearpoint)+","+yscale(lel ? lel["y"+yearpoint] : 0)+" ";
+	}
+	pathstring += "";
+	console.log(pathstring);
+		
+	svg.attr("transform","translate(40,40)").append('svg:polyline')
+		.attr('points', pathstring)
+		.attr('stroke', 'green')
+		.attr('stroke-width', 2)
+		.attr('fill', 'none');
 }
 
 
