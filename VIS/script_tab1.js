@@ -380,7 +380,9 @@ function gen_bars() {
 						if(!d[selectedMedals]) return hscale(0.5); //for a short bar
 						return hscale(d[selectedMedals]); //medals shown
 	                   })
-	    .attr("fill","rgb(0,150,255)")	     
+	    .attr("fill",function(d) { if (d.country_name==searchedCountry)
+										return "red";
+										return "rgb(0,150,255)";})	     
 	    .on("click", colorbubbles)
 		.attr("y",function(d, i) {
                           return bar_stroke_thickness/2 +yscale(i);
@@ -579,10 +581,10 @@ function gen_line() {
 	var yearline = 1960;
 	var dataSize = line_dataset.length;
 	var maxNumber=0;
-
+	console.log("empezar");
 	for(var i =0; i<dataSize;i++){
-		if(maxNumber < line_dataset[i]["numberBronzeSilverGold"])
-			maxNumber = line_dataset[i]["numberBronzeSilverGold"]
+		if(maxNumber < parseInt(line_dataset[i]["numberBronzeSilverGold"]))
+			maxNumber = parseInt(line_dataset[i]["numberBronzeSilverGold"]);
 console.log(maxNumber);
 }
 		d3.select("#line_chart").selectAll("svg").remove();
