@@ -130,7 +130,7 @@ p{
 	border-left: 20px solid;
 	border-color: rgba(0, 0, 0, 0);
 	width: 600px;
-	height: 750px;
+	height: 700px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
@@ -140,7 +140,7 @@ p{
 	display: table-row;
     float: left;
 	position: absolute;
-	top: 680px;
+	top: 600px;
 }
 
 #sportschoices{

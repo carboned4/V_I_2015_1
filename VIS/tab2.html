@@ -20,10 +20,6 @@
     </ul>
     <h1>Standings Comparison</h1>
 	<div id="fieldinput">
-		<div id="sportschoices" onchange="changeSport()">
-		</div>
-		<br>
-		<br>
 		<div id="medalschoices">
 			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" value="numberGold">Gold</input>
 			<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver"value="numberSilver">Silver</input>
@@ -34,7 +30,6 @@
 			<input type="text" id="amount" readonly style="border:0;">
 			<div id="slider-range"></div>
 		</div>
-		<br>
 		<p>Search for two countries: &nbsp </p>
 		<form onsubmit="return false">
 			<label> <input id ="country1" type="text"  onchange="changeCountryOne()" value="Russia"> </label>
