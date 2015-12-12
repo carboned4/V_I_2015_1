@@ -150,6 +150,8 @@ function fixDoubleSlider(){
 	sliders[1].className+=" sliderpequeno";
 	sliders[0].className+=" slidermin";
 	sliders[1].className+=" slidermax";
+	sliders[0].innerHTML+="MIN";
+	sliders[1].innerHTML+="MAX";
 }
 
 $(function() {

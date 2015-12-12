@@ -1,9 +1,2 @@
-Line graph showing evolution on tab3
 CSS
 Sidebar com desportos (se houver tempo lol)
-comparação de países (in progress, by miguel)
-
-PROBLEMAS LINE CHART TAB2
-estado inicial -> tooltips iguais
-estado dinamico -> sem bolas no country2
-				-> tooltips do country2 na linha do country1

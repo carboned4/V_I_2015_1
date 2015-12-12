@@ -43,16 +43,22 @@ li {
 }
 
 .sliderpequeno{
-	height: 0.6em !important;
-	font-size: 6pt !important;
+	height: 10px !important;
+	width: 21px !important;
+	font-family: calibri, sans serif !important;
+    font-size: 9px !important;
+	text-align: center;
+	margin-left: -11px !important;
+	/*fullsize is 21px tall, plus 1px border above and below*/
+	/*this leaves 21-2 (two extra borders) /2 for each small slider, around 9px*/
 }
 
 .slidermin{
-	top: .3em !important;
+	top: 6px !important;
 }
 
 .slidermax{
-	top: -.3em !important;
+	top: -5px !important;
 }
 
 #warpic{

@@ -46,6 +46,26 @@ a{
 	padding: 4px;
 }
 
+.sliderpequeno{
+	height: 10px !important;
+	width: 21px !important;
+	font-family: calibri, sans serif !important;
+    font-size: 9px !important;
+	text-align: center;
+	margin-left: -11px !important;
+	/*fullsize is 21px tall, plus 1px border above and below*/
+	/*this leaves 21-2 (two extra borders) /2 for each small slider, around 9px*/
+}
+
+.slidermin{
+	top: 6px !important;
+}
+
+.slidermax{
+	top: -5px !important;
+}
+
+
 #warpic{
 	position: absolute;
 	z-index: 10;
@@ -110,9 +130,17 @@ p{
 	border-left: 20px solid;
 	border-color: rgba(0, 0, 0, 0);
 	width: 600px;
-	height: 600px;
+	height: 750px;
 	overflow-y: scroll;
 	overflow-x: hidden;
+}
+
+#line_chart{
+	width: 600px;
+	display: table-row;
+    float: left;
+	position: absolute;
+	top: 680px;
 }
 
 #sportschoices{
