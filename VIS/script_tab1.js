@@ -119,7 +119,10 @@ function changeYear(){
 
 function changeCountry(){
 searchedCountry = document.getElementById("country").value;
-line_dataset = process_line(full_dataset);
+	if(selectedSport!= "All Sports")
+		line_dataset = process_line(full_dataset);
+	else 
+	line_dataset = process_line(sumSports(full_dataset,1896,2008));
 gen_line();
 }
 
@@ -162,13 +165,13 @@ function startupscript(){
 }
 
 /*adds all the sports into All Sports, by year and country*/
-function sumSports(unsummed_data){
+function sumSports(unsummed_data,min,max){
 	var summed = new Array();
 	var entry;
 	var curryear;
 
 	//for each year, we count the number of medals of each country
-	for(curryear = year_min; curryear <= year_max; curryear +=4){
+	for(curryear = min; curryear <= max; curryear +=4){
 		var sumsforthisyear = new Array();
 		var unsummedforthisyear = unsummed_data.filter(function(a){return a.Edition == curryear;});
 		//^here we have the data for each country in a certain year
@@ -301,7 +304,7 @@ function process_data(data_in){
 	//handle "all sports"
 	var summedsport_data;
 	if(selectedSport == "All Sports"){
-		summedsport_data = sumSports(sportfiltered_data);
+		summedsport_data = sumSports(sportfiltered_data,year_min,year_max);
 		testarray = summedsport_data;
 	}
 	else
