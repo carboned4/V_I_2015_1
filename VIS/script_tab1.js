@@ -597,11 +597,11 @@ function gen_line() {
 
     var yscale = d3.scale.sqrt()
                          .domain([0,maxNumber])
-                         .range([h-30,5]);
+                         .range([h-35,10]);
 
     
 	var xAxis = d3.svg.axis()
-	.tickValues(d3.range(1896, 2009,4))
+	.tickValues(d3.range(1896, 2009,8))
 	.tickFormat(d3.format("d"))
     .scale(xscale);
   
@@ -609,54 +609,61 @@ function gen_line() {
     .scale(yscale)
 	.orient("left").tickSize(0)
 	.tickValues(function(){
-		if(maxNumber > 40) return [0.5,1,2,5,10,20,40,120];
-		else if (maxNumber < 2) return [0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
-		else if (maxNumber < 10) return [0.01,0.1,0.5,1,2,5,10,20,40,120];
-		else return [0.1,0.5,1,2,5,10,20,40,120]; //5 a 40
+		if(maxNumber > 150) return [0,2,10,20,50,100,175,250,350,450];
+		else if (maxNumber < 10) return [0,1,2,3,4,5,6,7,8,9,10]
+		else if (maxNumber < 15) return [0,1,2,3,5,8,12,15]
+		else if (maxNumber < 30) return [0,1,2,3,5,7,10,15,20,25,30]
+		else if (maxNumber < 50) return [0,1,2,5,10,15,25,35,50]
+		else if (maxNumber < 75) return [0,1,2,5,10,20,30,50,75];
+		else return [0,1,2,5,10,20,30,50,75,100, 120, 150]; //75 a 150
 	})
 	.tickFormat(d3.format("g"));
 	
 	svg.append("svg:g")
 	.attr("class","axis")
-	.attr("transform", "translate(0,"+(h-30)+")")
-    .call(xAxis);
+	.attr("transform", "translate(0,"+(h-35)+")")
+    .call(xAxis)/*.selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-45)" )*/;
 
     svg.append("svg:g")
     .attr("class","axis")
-    .attr("transform", "translate(30,5)")
+    .attr("transform", "translate(30,0)")
     .call(yAxis);
 
 
-    var lineGen = d3.svg.line()
-  	.x(function(d) {
-    return xscale(d.Edition);
-  })
-  .y(function(d) {
-    return yscale(d[selectedMedals]);
-  });
+	var lineGen = d3.svg.line()
+	.x(function(d) {
+	return xscale(d.Edition);
+	})
+	.y(function(d) {
+	return yscale(d[selectedMedals]);
+	});
  
  
 
-svg.append('svg:path')
-  .attr('d', lineGen(line_dataset))
-  .style('stroke', 'red')
-  .style('stroke-width', 2)
-  .style("fill", "none");
+	svg.append('svg:path')
+		.attr('d', lineGen(line_dataset))
+		.style('stroke', 'red')
+		.style('stroke-width', 2)
+		.style("fill", "none");
   
 
 
-  svg.selectAll("circle").data(line_dataset).enter()
-  .append('svg:circle')
-  .attr("cx", function(d) {
-                          return xscale(d.Edition);
-	                   })
-  .attr("cy", function(d) {
-                          return  yscale(d[selectedMedals]);
-	                   })
-  .attr("r",5)
-  .style("fill","red")
-  .on("click", function (d) {goToYear(d.Edition)})
-   .on("mouseover", function(d){
+	svg.selectAll("circle").data(line_dataset).enter()
+	.append('svg:circle')
+	.attr("cx", function(d) {
+						  return xscale(d.Edition);
+					   })
+	.attr("cy", function(d) {
+						  return  yscale(d[selectedMedals]);
+					   })
+	.attr("r",5)
+	.style("fill","red")
+	.on("click", function (d) {goToYear(d.Edition)})
+	.on("mouseover", function(d){
 			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
 			var ttid = "tt_"+d.NOC;
 			d3.select("body")
@@ -664,13 +671,13 @@ svg.append('svg:path')
 				.attr("class","tooltip")
 				.attr("id",ttid)
 				.text(ttlabel);
-		})
-		.on("mousemove", function(d){
-			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-		})
-		.on("mouseout", function(d){
-			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
-		});
+	})
+	.on("mousemove", function(d){
+		d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+	})
+	.on("mouseout", function(d){
+		d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+	});
 
 }
 

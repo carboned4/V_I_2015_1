@@ -424,10 +424,10 @@ function gen_line() {
 	.orient("left")
 	.tickSize(0)
 	.tickValues(function(){
-		if(maxforcountry > 40) return [0.5,1,2,5,10,20,40,120];
-		else if (maxforcountry < 2) return [0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
-		else if (maxforcountry < 10) return [0.01,0.1,0.5,1,2,5,10,20,40,120];
-		else return [0.1,0.5,1,2,5,10,20,40,120]; //5 a 40
+		if(maxforcountry > 40) return [0,0.5,1,2,5,10,20,40,120];
+		else if (maxforcountry < 2) return [0,0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else if (maxforcountry < 10) return [0,0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else return [0,0.1,0.5,1,2,5,10,20,40,120]; //10 a 40
 	})
 	.tickFormat(d3.format("g"));
 	
