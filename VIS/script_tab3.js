@@ -540,6 +540,7 @@ function colorbars(){
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
 	searchedCountry = previousCountry;
+	document.getElementById("country").value=searchedCountry;
 	line_dataset = process_line(full_dataset);
 	gen_line();
 	return;
@@ -555,6 +556,7 @@ function colorbubbles(){
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
 	searchedCountry = previousCountry;
+	document.getElementById("country").value=searchedCountry;
 	line_dataset = process_line(full_dataset);
 	gen_line();
 	return;
