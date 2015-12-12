@@ -42,6 +42,19 @@ li {
 	padding: 4px;
 }
 
+.sliderpequeno{
+	height: 0.6em !important;
+	font-size: 6pt !important;
+}
+
+.slidermin{
+	top: .3em !important;
+}
+
+.slidermax{
+	top: -.3em !important;
+}
+
 #warpic{
 	position: absolute;
 	z-index: 10;

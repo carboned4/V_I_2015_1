@@ -140,6 +140,17 @@ function process_line(data_in){
 	return return_dataset;
 }
 
+var sliders;
+function fixDoubleSlider(){
+	sliders = d3.select("#slider-range").selectAll("span")[0];
+	console.log("detected "+sliders.length + " sliders. if 2, all okay");
+	sliders[0].id="slidermin";
+	sliders[1].id="slidermax";
+	sliders[0].className+=" sliderpequeno";
+	sliders[1].className+=" sliderpequeno";
+	sliders[0].className+=" slidermin";
+	sliders[1].className+=" slidermax";
+}
 
 $(function() {
     $( "#slider-range" ).slider({
@@ -161,6 +172,7 @@ $(function() {
   });
 
 function startupscript(){
+	fixDoubleSlider();
 	createSportsDropdown();
 	changeCountry();
 }
