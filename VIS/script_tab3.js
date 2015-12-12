@@ -48,6 +48,12 @@ function updateYearLabel(){
 	document.getElementById("yearelementtowrite").innerHTML = 1960+yearel.value*4;
 }
 
+function goToYear(){
+	year=parseInt(d3.select(this).attr("year"));
+	document.getElementById("singleyearslider").value=(year-1960)/4;
+	changeYear();
+}		
+
 function changeCountry(){
 	searchedCountry = document.getElementById("country").value;
 	line_dataset = process_line(full_dataset);
@@ -79,6 +85,7 @@ function process_data(data_in){
 	var return_dataset = unfiltered_data.sort(function(a, b){
 		return b["y"+year] - a["y"+year];
 	});
+	d3.selectAll(".tooltip").remove();
 	return return_dataset;
 }
 
@@ -390,11 +397,11 @@ function gen_line() {
    console.log("max: "+maxforcountry);
     var xscale = d3.scale.linear()
                         .domain([1960,2008])
-                        .range([32,w]);
+                        .range([32,w-32]);
 
     var yscale = d3.scale.sqrt()
                          .domain([0,maxforcountry])
-                         .range([h-30,0]);
+                         .range([h-30,5]);
 						 /*
 						 sqrt()
                         .domain([
@@ -430,7 +437,7 @@ function gen_line() {
 	
 	svg.append("svg:g")
 	.attr("class","axis")
-	.attr("transform", "translate(30,0)")
+	.attr("transform", "translate(30,5)")
 	.call(yAxis);
 	
 	var pathstring ="";
@@ -439,15 +446,64 @@ function gen_line() {
 		pathstring += " "+xscale(yearpoint)+","+yscale(lel ? lel["y"+yearpoint] : 0)+" ";
 	}
 	pathstring += "";
-	//console.log(pathstring);
 		
 	svg.append('svg:polyline')
 		.attr('points', pathstring)
 		.style('stroke', 'red')
 		.style('stroke-width', 2)
 		.style('fill', 'none');
+		
+	var yearp = 1960;
+	for(yearp = 1960; yearp <= 2008; yearp+=4){
+		var lel = line_dataset[0];
+		svg.append("circle")
+			.attr("cx",xscale(yearp))
+			.attr("year",yearp)
+			.attr("ioc", lel.ioc_code)
+			.attr("coef", lel["y"+yearp])
+			.attr("cy",yscale(lel ? lel["y"+yearp] : 0))
+			.attr("r",5).style("fill","red")
+			.on("click", goToYear)
+			.on("mouseover", OverLineTooltip)/*{
+				var ttlabel;
+				if(!lel["y"+year]) ttlabel = lel.ioc_code + " - 0 million medals/person in "+yearp;
+				else ttlabel = lel.ioc_code + " - " + parseFloat(lel["y"+year]).toFixed(3) + " million medals/person in "+yearp;
+				var ttid = "tt_"+lel.ioc_code;
+				d3.select("body")
+					.append("div")
+					.attr("class","tooltip")
+					.attr("id",ttid)
+					.text(ttlabel);
+			})*/
+			.on("mousemove", MoveLineTooltip)/*{
+				d3.select("#tt_"+lel.ioc_code).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+			})*/
+			.on("mouseout", OutLineTooltip);/*{
+				d3.select("#tt_"+lel.ioc_code).remove();
+			});*/
+	}
+	
 }
 
+function OverLineTooltip(){
+	var ttlabel;
+	//if(!lel["y"+year]) ttlabel = lel.ioc_code + " - 0 million medals/person in "+yearp;
+	/*else */ttlabel = d3.select(this).attr("ioc") + " - " + parseFloat(d3.select(this).attr("coef")).toFixed(3) + " million medals/person in "+d3.select(this).attr("year");
+	var ttid = "tt_"+d3.select(this).attr("ioc");
+	d3.select("body")
+		.append("div")
+		.attr("class","tooltip")
+		.attr("id",ttid)
+		.text(ttlabel);
+}
+
+function MoveLineTooltip(){
+	d3.select("#tt_"+d3.select(this).attr("ioc")).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+}
+
+function OutLineTooltip(){
+	d3.select("#tt_"+d3.select(this).attr("ioc")).remove();
+}
 
 function getNOCforName(nametofind){
 	for(el in shown_dataset){
