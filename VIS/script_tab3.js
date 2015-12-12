@@ -17,7 +17,7 @@ var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (m
 
 var year = 1960;
 
-var searchedCountry = "";
+var searchedCountry = "Portugal";
 
 var mapdrawn = false;
 
@@ -72,9 +72,10 @@ function changeYear(){
 
 
 function startupscript(){
-	document.getElementById("singleyearslider").value=0;
+	document.getElementById("singleyearslider").value=12;
 	changeYear();
-	gen_line();
+	changeCountry();
+	//gen_line();
 }
 	
 // filter by sport, handle years, do total of medals chosen, sort by total of medals chosen
@@ -529,7 +530,7 @@ function IdToId(barid){
 	return barid.split("_")[1];
 }
 
-var previousCountry = "";
+var previousCountry = "Portugal";
 function colorbars(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");

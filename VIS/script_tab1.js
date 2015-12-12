@@ -21,7 +21,7 @@ var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (m
 
 var year_min = 2008, year_max = 2008;
 
-var searchedCountry = "";
+var searchedCountry = "United States";
 
 var selectedSport = "Aquatics";
 
@@ -162,6 +162,7 @@ $(function() {
 
 function startupscript(){
 	createSportsDropdown();
+	changeCountry();
 }
 
 /*adds all the sports into All Sports, by year and country*/
@@ -574,7 +575,7 @@ function gen_bubbles() {
 
 
 function gen_line() {
-    var w = 650;
+    var w = 600;
     var h = 400;
 	var dataSize = line_dataset.length;
 	var maxNumber=0;
@@ -591,29 +592,38 @@ function gen_line() {
 
 	
     var xscale = d3.scale.linear()
-                        .domain([line_dataset[0]["Edition"],1+parseInt(line_dataset[dataSize-1]["Edition"])])
-                        .range([32,w]);
+                        .domain([1896,2008])
+                        .range([32,w-32]);
 
     var yscale = d3.scale.sqrt()
                          .domain([0,maxNumber])
-                         .range([h-30,30]);
+                         .range([h-30,5]);
 
     
 	var xAxis = d3.svg.axis()
+	.tickValues(d3.range(1896, 2009,4))
+	.tickFormat(d3.format("d"))
     .scale(xscale);
   
 	var yAxis = d3.svg.axis()
     .scale(yscale)
-	.orient("left");
+	.orient("left").tickSize(0)
+	.tickValues(function(){
+		if(maxNumber > 40) return [0.5,1,2,5,10,20,40,120];
+		else if (maxNumber < 2) return [0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else if (maxNumber < 10) return [0.01,0.1,0.5,1,2,5,10,20,40,120];
+		else return [0.1,0.5,1,2,5,10,20,40,120]; //5 a 40
+	})
+	.tickFormat(d3.format("g"));
 	
 	svg.append("svg:g")
 	.attr("class","axis")
-	.attr("transform", "translate(0,370)")
+	.attr("transform", "translate(0,"+(h-30)+")")
     .call(xAxis);
 
     svg.append("svg:g")
     .attr("class","axis")
-    .attr("transform", "translate(30,0)")
+    .attr("transform", "translate(30,5)")
     .call(yAxis);
 
 
@@ -688,7 +698,7 @@ function IdToId(barid){
 	return barid.split("_")[1];
 }
 
-var previousCountry = ""
+var previousCountry = "United States";
 function colorbars(){
 	d3.select("#bar_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");

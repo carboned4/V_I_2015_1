@@ -110,9 +110,17 @@ p{
 	border-left: 20px solid;
 	border-color: rgba(0, 0, 0, 0);
 	width: 600px;
-	height: 600px;
+	height: 780px;
 	overflow-y: scroll;
 	overflow-x: hidden;
+}
+
+#line_chart{
+	width: 600px;
+	display: table-row;
+    float: left;
+	position: absolute;
+	top: 680px;
 }
 
 #sportschoices{

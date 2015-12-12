@@ -19,7 +19,7 @@
 	<div id="fieldinput">
 		
 		<div id="divfor2slider">
-			<form onsubmit="return false">
+			<form>
 				<span>Year:</span>
 				<span id="yearelementtowrite" ></span><br>
 				<input type="range" onchange="changeYear()" oninput="updateYearLabel()" name="points" id="singleyearslider" min="0" max="12">
@@ -29,8 +29,8 @@
 			</form>
 		</div>
 		
-		<form>
-			<label><p>Search for a country: &nbsp </p><input id ="country" type="text" onchange="changeCountry()" value=""> </label>
+		<form onsubmit="return false">
+			<label><p>Search for a country: &nbsp </p><input id ="country" type="text" onchange="changeCountry()" value="Portugal"> </label>
 		</form>
 	</div>
 	<hr/>
