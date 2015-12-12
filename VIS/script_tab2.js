@@ -13,7 +13,7 @@ http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
-var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
+var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset,line_dataset,line_dataset2,country2defined=0; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 var bubbles_dataset;
 var bars_dataset = new Array();
 
@@ -46,6 +46,7 @@ function updateMedalsString(){
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	gen_line();
 }
 
 
@@ -88,6 +89,36 @@ function changeYear(){
 	gen_bubbles();
 }
 
+
+function changeCountryOne(){
+country1 = document.getElementById("country1").value;
+line_dataset = process_line(full_dataset,country1);
+line_dataset = sumSports(line_dataset,1896,2008);
+gen_line();
+}
+
+function changeCountryTwo(){
+country2 = document.getElementById("country2").value;
+line_dataset2 = process_line(full_dataset,country2);
+line_dataset2 = sumSports(line_dataset2,1896,2008);
+country2defined=1;
+gen_line();
+}
+
+function process_line(data_in,country){
+	var unfiltered_data = data_in.filter(function(a){
+		if(a["country_name"] == country){
+		
+		return a[selectedMedals];
+		}
+		else return;
+	});
+	var return_dataset = unfiltered_data.sort(function(a, b){
+		return  a["Edition"] - b["Edition"] ;
+	});
+	return return_dataset;
+}
+
 $(function() {
     $( "#slider-range" ).slider({
       range: true,
@@ -108,17 +139,16 @@ $(function() {
   });
 
 function startupscript(){
-	
 }
 
 /*adds all the sports into All Sports, by year and country*/
-function sumSports(unsummed_data){
+function sumSports(unsummed_data,min,max){
 	var summed = new Array();
 	var entry;
 	var curryear;
 
 	//for each year, we count the number of medals of each country
-	for(curryear = year_min; curryear <= year_max; curryear +=4){
+	for(curryear = min; curryear <= max; curryear +=4){
 		var sumsforthisyear = new Array();
 		var unsummedforthisyear = unsummed_data.filter(function(a){return a.Edition == curryear;});
 		//^here we have the data for each country in a certain year
@@ -247,7 +277,7 @@ function process_data(data_in){
 	var bars_summedsport_data; //will contain allsports and each sport (for all years separately)
 	var bubbles_summedsport_data; //will contain allsports (for all years separately)
 	/*create the sum of all sports, then concatenate it*/
-	bubbles_summedsport_data = sumSports(bars_yearrange_data);
+	bubbles_summedsport_data = sumSports(bars_yearrange_data,year_min,year_max);
 	bars_summedsport_data = bubbles_summedsport_data.concat(bars_yearrange_data);
 	//testarray = bars_summedsport_data;
 	
@@ -315,7 +345,8 @@ d3.csv("medals_improved.csv", function (data) {
     shown_dataset = process_data(full_dataset);
 	//bars_dataset = shown_dataset[0];
 	//bubbles_dataset = shown_dataset[1];
-	
+	changeCountryOne();
+	changeCountryTwo();
 	gen_bars();
 	gen_bubbles();
 })
@@ -576,6 +607,145 @@ function gen_bubbles() {
 	bubblesvg.call(zoom);
 }
 
+
+function gen_line() {
+    var w = 650;
+    var h = 400;
+	var dataSize = line_dataset.length;
+	
+	var maxNumber=0;
+
+	for(var i =0; i<dataSize;i++){
+		if(maxNumber < parseInt(line_dataset[i][selectedMedals]))
+			maxNumber = parseInt(line_dataset[i][selectedMedals]);
+	}
+
+	if(country2defined==1) {
+		var dataSizee = line_dataset2.length;
+		for(var i =0; i<dataSizee;i++){
+			if(maxNumber < parseInt(line_dataset2[i][selectedMedals]))
+				maxNumber = parseInt(line_dataset2[i][selectedMedals]);
+		}
+	}
+		d3.select("#line_chart").selectAll("svg").remove();
+    var svg = d3.select("#line_chart")
+                .append("svg")
+                .attr("width",w)
+                .attr("height",h);
+
+	
+    var xscale = d3.scale.linear()
+                        .domain([1896,2008])
+                        .range([32,w]);
+
+    var yscale = d3.scale.sqrt()
+                         .domain([0,maxNumber])
+                         .range([h-30,30]);
+
+    
+	var xAxis = d3.svg.axis()
+    .scale(xscale);
+  
+	var yAxis = d3.svg.axis()
+    .scale(yscale)
+	.orient("left");
+	
+	svg.append("svg:g")
+	.attr("class","axis")
+	.attr("transform", "translate(0,370)")
+    .call(xAxis);
+
+    svg.append("svg:g")
+    .attr("class","axis")
+    .attr("transform", "translate(30,0)")
+    .call(yAxis);
+
+
+    var lineGen = d3.svg.line()
+  	.x(function(d) {
+    return xscale(d.Edition);
+  })
+  .y(function(d) {
+    return yscale(d[selectedMedals]);
+  });
+ 
+ 
+
+svg.append('svg:path')
+  .attr('d', lineGen(line_dataset))
+  .style('stroke', 'green')
+  .style('stroke-width', 2)
+  .style("fill", "none");
+
+  svg.selectAll("circle").data(line_dataset).enter()
+  .append('svg:circle')
+  .attr("cx", function(d) {
+                          return xscale(d.Edition);
+	                   })
+  .attr("cy", function(d) {
+                          return  yscale(d[selectedMedals]);
+	                   })
+  .attr("r",5)
+  .style("fill","green")
+  .on("click", function (d) {goToYear(d.Edition)})
+   .on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+		});
+  
+  if(country2defined==1){
+  svg.append('svg:path')
+  .attr('d', lineGen(line_dataset2))
+  .style('stroke', 'red')
+  .style('stroke-width', 2)
+  .style("fill", "none");
+  svg.selectAll("circle").data(line_dataset2).enter()
+  .append('svg:circle')
+  .attr("cx", function(d) {
+                          return xscale(d.Edition);
+	                   })
+  .attr("cy", function(d) {
+                          return  yscale(d[selectedMedals]);
+	                   })
+  .attr("r",5)
+  .style("fill","red")
+  .on("click", function (d) {goToYear(d.Edition)})
+   .on("mouseover", function(d){
+			var ttlabel2 = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
+			var ttid2 = "ttt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid2)
+				.text(ttlabel2);
+		})
+		.on("mousemove", function(d){
+			d3.select("#ttt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#ttt_"+d.NOC).remove();//style("visibility", "hidden");
+		});
+
+
+
+
+}
+/*
+  
+*/
+}
+
 function getNOCforName(nametofind){
 	for(el in shown_dataset){
 		var possiblecountry = shown_dataset[el];
@@ -603,5 +773,19 @@ function transition() {
 	gen_bars();
 	return;
 	
+}
+
+function goToYear(edition){
+	for(var i=0;i<line_dataset.length;i++){
+		if(line_dataset[i]["Edition"]==edition){
+			console.log(parseInt(edition));
+			year_min=parseInt(edition);
+			year_max=parseInt(edition);
+			$("#slider-range").slider("values",1,parseInt((edition-1896)/4)); //set both sliders to the minimum slider
+			$("#slider-range").slider("values",0,parseInt((edition-1896)/4));
+			$( "#amount" ).val(year_min + " - "+ year_max );
+			changeYear();
+		}		
+	}
 }
 		

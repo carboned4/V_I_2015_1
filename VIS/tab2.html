@@ -36,15 +36,16 @@
 		</div>
 		<br>
 		<p>Search for two countries: &nbsp </p>
-		<form>
-			<label> <input id ="country1" type="text" value="Russia"> </label>
-			<label> <input id ="country2" type="text" value="China"> </label>
+		<form onsubmit="return false">
+			<label> <input id ="country1" type="text"  onchange="changeCountryOne()" value="Russia"> </label>
+			<label> <input id ="country2" type="text"  onchange="changeCountryTwo()" value="China"> </label>
 		</form>
 		<hr>
 	</div>
 	
     <div id="bubble_map"></div>
 	<div id="bar_chart"></div>
+	<div id="line_chart"></div>
 	<img id="warpic" src="worldatwar.png" style="visiblity:hidden">
   </body>
 
