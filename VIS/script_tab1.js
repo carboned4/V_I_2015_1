@@ -573,15 +573,9 @@ function gen_bubbles() {
 function gen_line() {
     var w = 650;
     var h = 400;
-	var line_thickness = 20;
-    var padding=30;
-	var between_lines = 10;
-	var line_stroke_thickness = 2;
-	var line_shift_right = 200;
-	var medal_label_shift_right = 20;
-	var yearline = 1960;
 	var dataSize = line_dataset.length;
 	var maxNumber=0;
+
 	for(var i =0; i<dataSize;i++){
 		if(maxNumber < parseInt(line_dataset[i][selectedMedals]))
 			maxNumber = parseInt(line_dataset[i][selectedMedals]);
@@ -594,7 +588,7 @@ function gen_line() {
 
 	
     var xscale = d3.scale.linear()
-                        .domain([line_dataset[0]["Edition"],line_dataset[dataSize-1]["Edition"]])
+                        .domain([line_dataset[0]["Edition"],1+parseInt(line_dataset[dataSize-1]["Edition"])])
                         .range([32,w]);
 
     var yscale = d3.scale.sqrt()
@@ -648,7 +642,22 @@ svg.append('svg:path')
 	                   })
   .attr("r",5)
   .style("fill","red")
-  .on("click", function (d) {goToYear(d.Edition)});
+  .on("click", function (d) {goToYear(d.Edition)})
+   .on("mouseover", function(d){
+			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
+			var ttid = "tt_"+d.NOC;
+			d3.select("body")
+				.append("div")
+				.attr("class","tooltip")
+				.attr("id",ttid)
+				.text(ttlabel);
+		})
+		.on("mousemove", function(d){
+			d3.select("#tt_"+d.NOC).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+		})
+		.on("mouseout", function(d){
+			d3.select("#tt_"+d.NOC).remove();//style("visibility", "hidden");
+		});
 
 }
 
@@ -687,8 +696,8 @@ function colorbars(){
 	d3.select("#bar_"+bartohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bartohighlightID).attr("fill","red");
 	searchedCountry = previousCountry;
-	line_dataset = process_line(full_dataset);
-	gen_line();
+	document.getElementById("country").value=searchedCountry;
+	changeCountry();
 	return;
 }
 
@@ -702,8 +711,8 @@ function colorbubbles(){
 	d3.select("#bar_"+bubbletohighlightID).attr("fill","red");
 	d3.select("#bubble_"+bubbletohighlightID).attr("fill","red");
 	searchedCountry = previousCountry;
-	line_dataset = process_line(full_dataset);
-	gen_line();
+	document.getElementById("country").value=searchedCountry;
+	changeCountry();
 	return;
 }
 
@@ -712,7 +721,6 @@ function colorbarandbubbles(){
 	d3.select("#bubble_"+getNOCforName(previousCountry)).attr("fill","rgb(0,150,255)");
 	searchedCountry = document.getElementById("country").value;
 	previousCountry = searchedCountry;
-	
 	d3.select("#bar_"+getNOCforName(searchedCountry)).attr("fill","red");
 	d3.select("#bubble_"+getNOCforName(searchedCountry)).attr("fill","red");
 
