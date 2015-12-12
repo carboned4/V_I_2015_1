@@ -701,7 +701,6 @@ function gen_line() {
 	});
  
  
-	console.log(line_dataset.length);
 	svg.append('svg:path')
 	  .attr('d', lineGen(line_dataset))
 	  .style('stroke', 'green')
@@ -736,7 +735,6 @@ function gen_line() {
 		});
 	  
 	if(country2defined==1){
-		console.log(line_dataset2.length);
 		svg.append('svg:path')
 			.attr('d', lineGen(line_dataset2))
 			.style('stroke', 'red')
@@ -807,7 +805,6 @@ function transition() {
 function goToYear(edition){
 	for(var i=0;i<line_dataset.length;i++){
 		if(line_dataset[i]["Edition"]==edition){
-			console.log(parseInt(edition));
 			year_min=parseInt(edition);
 			year_max=parseInt(edition);
 			$("#slider-range").slider("values",1,parseInt((edition-1896)/4)); //set both sliders to the minimum slider

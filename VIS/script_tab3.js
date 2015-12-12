@@ -73,8 +73,8 @@ function changeYear(){
 
 function startupscript(){
 	document.getElementById("singleyearslider").value=12;
-	changeYear();
-	changeCountry();
+	//changeYear();
+	//changeCountry();
 	//gen_line();
 }
 	
@@ -107,6 +107,8 @@ function process_line(data_in){
 
 d3.csv("coef.csv", function (data) {
     full_dataset = data;
+	changeYear();
+	changeCountry();
 	startupscript();   
 	
 	
@@ -395,7 +397,7 @@ function gen_line() {
 		var maxattempt = parseFloat(lil["y"+yearpoint]);
 		if (maxattempt > maxforcountry) maxforcountry = maxattempt;
 	}
-   console.log("max: "+maxforcountry);
+   //console.log("max: "+maxforcountry);
     var xscale = d3.scale.linear()
                         .domain([1960,2008])
                         .range([32,w-32]);
@@ -425,6 +427,7 @@ function gen_line() {
 	.tickSize(0)
 	.tickValues(function(){
 		if(maxforcountry > 40) return [0,0.5,1,2,5,10,20,40,120];
+		else if (maxforcountry < 0.5) return [0,0.001,0.01,0.05,0.1,0.25,0.5];
 		else if (maxforcountry < 2) return [0,0.001,0.01,0.1,0.5,1,2,5,10,20,40,120];
 		else if (maxforcountry < 10) return [0,0.01,0.1,0.5,1,2,5,10,20,40,120];
 		else return [0,0.1,0.5,1,2,5,10,20,40,120]; //10 a 40

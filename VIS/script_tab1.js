@@ -176,7 +176,6 @@ $(function() {
 function startupscript(){
 	fixDoubleSlider();
 	createSportsDropdown();
-	changeCountry();
 }
 
 /*adds all the sports into All Sports, by year and country*/
@@ -351,6 +350,7 @@ function process_data(data_in){
 d3.csv("medals_improved.csv", function (data) {
     full_dataset = data;    
     shown_dataset = process_data(full_dataset);
+	changeCountry();
 	gen_bars();
 	gen_bubbles();
 	//gen_map();
