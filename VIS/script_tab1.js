@@ -107,8 +107,8 @@ function startAnim(){
 	else {
 	var a_min = $("#slider-range").slider("values",0);
 	var a_max = a_min; //these are a value 0-28
-	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
-	$("#slider-range").slider("values",1,a_max);
+	$("#slider-range").slider("values",1,a_min); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",0,a_max);
 	year_max = year_min = 1896 + a_min*4;
 	$( "#amount" ).val(year_min + " - "+ year_max );
 	changeYear();
@@ -189,7 +189,7 @@ $(function() {
       range: true,
       min: 0,
       max: 28,
-      values: [ 0, 28 ],
+      values: [ 1, 28 ],
       slide: function( event, ui ) {
         $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
 		year_min = 1896+ui.values[0]*4;

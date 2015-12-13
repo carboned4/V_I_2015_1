@@ -88,8 +88,8 @@ function animate(){
 	}
 	var a_max = $("#slider-range").slider("values",1) +1;
 	var a_min = a_max; //these are a value 0-28
-	$("#slider-range").slider("values",1,a_max); //set both sliders to the minimum slider
-	$("#slider-range").slider("values",0,a_min);
+	$("#slider-range").slider("values",0,a_max); //set both sliders to the minimum slider
+	$("#slider-range").slider("values",1,a_min);
 	$( "#amount" ).val((year_min +4)+ " - "+ (year_max+4) );
 	year_max = year_min = 1896 + a_min*4;
 	changeYear();
@@ -153,7 +153,7 @@ $(function() {
       range: true,
       min: 0,
       max: 28,
-      values: [ 0, 28 ],
+      values: [ 1, 28 ],
       slide: function( event, ui ) {
         $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
 		year_min = 1896+ui.values[0]*4;
