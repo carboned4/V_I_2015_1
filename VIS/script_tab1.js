@@ -17,6 +17,15 @@ http://bl.ocks.org/biovisualize/1016860
 http://bl.ocks.org/ilyabo/1373263
 */
 
+
+      $(document).ready(function () {
+    var icon = $('.play');
+    icon.click(function () {
+        icon.toggleClass('active');
+        return false;
+    });
+});
+
 var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year_min = 2008, year_max = 2008;
@@ -93,6 +102,9 @@ function changeSport(){
 }
 
 function startAnim(){
+	if(document.getElementById("yo").className=="play active")
+	stopAnim();
+	else {
 	var a_min = $("#slider-range").slider("values",0);
 	var a_max = a_min; //these are a value 0-28
 	$("#slider-range").slider("values",0,a_min); //set both sliders to the minimum slider
@@ -101,6 +113,7 @@ function startAnim(){
 	$( "#amount" ).val(year_min + " - "+ year_max );
 	changeYear();
 	doit= setInterval(animate, 1000);
+	}
 }
 
 function stopAnim(){
@@ -117,7 +130,7 @@ function animate(){
 	var a_min = a_max; //these are a value 0-28
 	$("#slider-range").slider("values",1,a_max); //set both sliders to the minimum slider
 	$("#slider-range").slider("values",0,a_min);
-	$( "#amount" ).val(year_min + " - "+ year_max );
+	$( "#amount" ).val((year_min +4)+ " - "+ (year_max+4) );
 	year_max = year_min = 1896 + a_min*4;
 	changeYear();
 }

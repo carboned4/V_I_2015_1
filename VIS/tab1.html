@@ -10,6 +10,7 @@
    <script src="jquery-ui.js"></script>
    <script src="script_tab1.js"></script>
    
+   
   </head>
 
   <body onload="startupscript()" >
@@ -48,8 +49,8 @@
 			<p for="amount">Years:
 			<input type="text" id="amount" readonly style="border:0;">
 			<div id="slider-range"></div>
-			<br><span id="magicianCode" >  <button type="button" onclick="startAnim()">Click Me!</button>
-										   <button type="button" onclick="stopAnim()">Stop it!</button>												</span>
+			<span id="magicianCode" >  <button type="button" onclick="startAnim()" id ="yo" class="play"></button>
+																</span>
 		</div>
 		
 		<form onsubmit="return false">
