@@ -13,6 +13,15 @@ http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
+
+      $(document).ready(function () {
+    var icon = $('.play');
+    icon.click(function () {
+        icon.toggleClass('active');
+        return false;
+    });
+});
+
 var dataset, full_dataset, shown_dataset,line_dataset; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 
 var year = 1960;
@@ -26,6 +35,9 @@ var projection;
 var doit;
 
 function startAnim(){
+	if(document.getElementById("yo").className=="play active")
+	stopAnim();
+	else 
 	doit= setInterval(animate, 1000);
 }
 
@@ -35,6 +47,8 @@ function stopAnim(){
 
 function animate(){
 	if(year==2008){
+		var icon = $('.play');
+		icon.toggleClass('active');
 		clearInterval(doit);
 		return;
 	}
@@ -72,7 +86,7 @@ function changeYear(){
 
 
 function startupscript(){
-	document.getElementById("singleyearslider").value=12;
+	document.getElementById("singleyearslider").value=0;
 	//changeYear();
 	//changeCountry();
 	//gen_line();

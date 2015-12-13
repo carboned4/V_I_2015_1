@@ -5,7 +5,10 @@
    <link rel="stylesheet" href="tab3.css">
    <script src="d3.v3.min.js"></script>
    <script src="topojson.v0.min.js"></script>
+   <script src="jquery-1.10.2.js"></script>
+   <script src="jquery-ui.js"></script>
    <script src="script_tab3.js"></script>
+
    
   </head>
 
@@ -23,8 +26,8 @@
 				<span>Year:</span>
 				<span id="yearelementtowrite" ></span><br>
 				<input type="range" onchange="changeYear()" oninput="updateYearLabel()" name="points" id="singleyearslider" min="0" max="12">
-				<br><span id="magicianCode" >  <button type="button" onclick="startAnim()">Click Me!</button>
-										   <button type="button" onclick="stopAnim()">Stop it!</button>												</span>
+				<span id="magicianCode" >  <button type="button" onclick="startAnim()" id ="yo" class="play"></button>
+																</span>
 				
 			</form>
 		</div>
