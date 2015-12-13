@@ -189,7 +189,7 @@ $(function() {
       range: true,
       min: 0,
       max: 28,
-      values: [ 1, 28 ],
+      values: [ 0, 28 ],
       slide: function( event, ui ) {
         $( "#amount" ).val((1896+ui.values[0]*4) + " - "+ (1896+ui.values[1]*4) );
 		year_min = 1896+ui.values[0]*4;
