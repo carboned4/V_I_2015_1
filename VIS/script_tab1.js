@@ -24,7 +24,7 @@ var year_min = 2008, year_max = 2008;
 var searchedCountry = "United States";
 
 var selectedSport = "Aquatics";
-
+var previousSport = "#c1";
 var selectedMedals = "numberBronze";
 
 var mapdrawn = false;
@@ -44,17 +44,21 @@ var sportsChoices = ["All Sports", "Aquatics", "Archery", "Athletics", "Badminto
 var sportsChoicesElement;
 var sportsSelectElement;
 function createSportsDropdown(){
-	sportsChoicesElement = document.getElementById("sportschoices");
-	var spsel = document.createElement("select");
-	spsel.id="sportsSelectElement";
+	sportsChoicesElement = document.getElementsByClassName("sidebar-links")[0];
+	sportsChoicesElement.style.height=window.innerHeight-80;
+	var spsel = document.createElement("div");
+	spsel.class="link-blue";
 	sportsSelectElement = sportsChoicesElement.appendChild(spsel);
 	var kindofsport;
 	for(kindofsport in sportsChoices){
-		var child = document.createElement("option");
+		var child = document.createElement("a");
+		//child.addEventListener("click", function () {changeSportsSpecial()});
+		child.id="c"+kindofsport;
+	
 		child.innerHTML = sportsChoices[kindofsport];
 		child.value = sportsChoices[kindofsport];
-		if(child.value == "Aquatics") child.selected= true;
 		sportsSelectElement.appendChild(child);
+		d3.select("#c"+kindofsport).on("click",changeSportsSpecial);
 	}
 }
 
@@ -69,8 +73,19 @@ function updateMedalsString(){
 	gen_line();
 }
 
+
+function changeSportsSpecial(){
+	d3.select(previousSport).style("background-color","#35393e");
+	previousSport="#"+d3.select(this).attr("id");
+	selectedSport=sportsChoices[parseInt(d3.select(this).attr("id").slice(1))];
+	d3.select(this).style("background-color","green");
+	changeSport();
+
+
+}
+
 function changeSport(){
-	selectedSport = document.getElementById("sportsSelectElement").value;
+	//selectedSport = document.getElementById("sportsSelectElement").value;
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
@@ -174,8 +189,10 @@ $(function() {
   });
 
 function startupscript(){
+	document.getElementsByClassName("main-content")[0].style.height=window.innerHeight-43;
 	fixDoubleSlider();
 	createSportsDropdown();
+	d3.select("#c1").style("background-color","green");
 }
 
 /*adds all the sports into All Sports, by year and country*/
@@ -655,6 +672,7 @@ function gen_line() {
 	.y(function(d) {
 	return yscale(d[selectedMedals]);
 	});
+
  
  
 
@@ -663,6 +681,7 @@ function gen_line() {
 		.style('stroke', 'red')
 		.style('stroke-width', 2)
 		.style("fill", "none");
+
   
 
 

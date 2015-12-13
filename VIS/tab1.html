@@ -13,11 +13,26 @@
   </head>
 
   <body onload="startupscript()" >
-	<ul>
+
+  		<ul>
 	    <a href="tab1.html"><li class="liselected">Standings</li></a>
 	    <a href="tab2.html"><li>Standings Comparison</li></a>
 	    <a href="tab3.html"><li>Coefficient</li></a>
 	</ul>
+  	<aside class="sidebar-left-collapse">
+
+	
+
+		<div class="sidebar-links">
+
+		</div>
+
+	</aside>
+
+	<div class="main-content">
+
+
+
     <h1>Standings</h1>
 	<div id="fieldinput">
 		<div id="sportschoices" onchange="changeSport()">
@@ -41,11 +56,13 @@
 			<label><p>Search for a country: &nbsp </p><input id ="country" type="text" onchange="changeCountry()" value="United States"> </label>
 		</form>
 	</div>
+
 	<hr/>
 	<div id="bubble_map"></div>
 	<div id="bar_chart"></div>
 	<div id="line_chart"></div>
 	<div id="warpic" style="visibility:hidden"><img src="worldatwar.png"></div>
+	</div>
   </body>
 
 </html>
