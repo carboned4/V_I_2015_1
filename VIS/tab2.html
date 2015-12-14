@@ -19,19 +19,31 @@
 	<a href="tab3.html"><li>Coefficient</li></a>
     </ul>
     <h1>Standings Comparison</h1>
-	<div id="fieldinput">
-		<div id="medalschoices">
-			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" value="numberGold">Gold</input>
-			<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver"value="numberSilver">Silver</input>
-			<input checked type="checkbox" name="numberBronze" onchange="updateMedalsString()" id="numberBronze" value="numberBronze">Bronze</input>
-		</div>
-		<div id="divfor2slider">
-			<p for="amount">Years:</label>
+	<div id="divfor2slider">
+			<p for="amount">Years:
 			<input type="text" id="amount" readonly style="border:0;">
 			<div id="slider-range"></div>
 			<span id="magicianCode" >  <button type="button" onclick="startAnim()" id ="yo" class="play"></button>
 																</span>
 		</div>
+		
+		<div id="medalschoices">
+				<img src="podium.png" class="podium" > 
+			<div class="numberGold">
+			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" class="gold" value="numberGold"></input>
+			<label for="numberGold"></label>
+    		</div>
+			<div class="numberSilver">
+					<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver" class="silver" value="numberSilver"></input>
+			<label for="numberSilver"></label>
+    		</div>
+       		<div class="numberBronze">
+			<input checked type="checkbox" name="numberBronze" onchange="updateMedalsString()" id="numberBronze" class="bronze" value="numberBronze"></input>
+			<label for="numberBronze"></label>
+    		</div>
+
+		</div>
+
 		<p>Search for two countries: &nbsp </p>
 		<form onsubmit="return false">
 			<label> <input id ="country1" type="text"  onchange="changeCountryOne()" value="Russia"> </label>

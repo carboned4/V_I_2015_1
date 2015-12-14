@@ -13,14 +13,31 @@ http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html
 https://groups.google.com/forum/#!topic/d3-js/pvovPbU5tmo
 */
 
-      $(document).ready(function () {
+$(document).ready(function () {
     var icon = $('.play');
+      var $silver = $('.numberSilver');
+    $($silver).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
+      var $gold = $('.numberGold');
+    $($gold).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
+    var $bronze = $('.numberBronze');
+    $($bronze).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
     icon.click(function () {
         icon.toggleClass('active');
         return false;
     });
 });
-
 var dataset, full_dataset, shown_dataset, selected_data,chosen_dataset,line_dataset,line_dataset2,country2defined=0; //var dataset é inútil (mas não apagar ainda), as outras são usadas
 var bubbles_dataset;
 var bars_dataset = new Array();
