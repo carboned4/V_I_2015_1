@@ -3,7 +3,8 @@ h1 {
    font-family: calibri, arial, sans serif;
 }
 
-ul {
+ul { 
+  
     list-style-type: none;
     margin-top: 12px;
     padding-bottom: 10px;

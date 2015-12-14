@@ -20,6 +20,24 @@ http://bl.ocks.org/ilyabo/1373263
 
       $(document).ready(function () {
     var icon = $('.play');
+      var $silver = $('.numberSilver');
+    $($silver).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
+      var $gold = $('.numberGold');
+    $($gold).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
+    var $bronze = $('.numberBronze');
+    $($bronze).css({
+        'background': 'none',
+        'border': 'none',
+        'box-shadow': 'none'
+    });
     icon.click(function () {
         icon.toggleClass('active');
         return false;

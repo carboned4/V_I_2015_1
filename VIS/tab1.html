@@ -38,11 +38,7 @@
 	<div id="fieldinput">
 		<div id="sportschoices" onchange="changeSport()">
 		</div>
-		<div id="medalschoices">
-			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" class="hello" value="numberGold">Gold</input>
-			<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver"value="numberSilver">Silver</input>
-			<input checked type="checkbox" name="numberBronze" onchange="updateMedalsString()" id="numberBronze" value="numberBronze">Bronze</input>
-		</div>
+
 		<div id="divfor2slider">
 			<p for="amount">Years:
 			<input type="text" id="amount" readonly style="border:0;">
@@ -51,15 +47,32 @@
 																</span>
 		</div>
 		
+		<div id="medalschoices">
+				<img src="podium.png" class="podium" > 
+			<div class="numberGold">
+			<input type="checkbox" name="numberGold" onchange="updateMedalsString()" id="numberGold" class="gold" value="numberGold"></input>
+			<label for="numberGold"></label>
+    		</div>
+			<div class="numberSilver">
+					<input type="checkbox" name="numberSilver" onchange="updateMedalsString()" id="numberSilver" class="silver" value="numberSilver"></input>
+			<label for="numberSilver"></label>
+    		</div>
+       		<div class="numberBronze">
+			<input checked type="checkbox" name="numberBronze" onchange="updateMedalsString()" id="numberBronze" class="bronze" value="numberBronze"></input>
+			<label for="numberBronze"></label>
+    		</div>
+
+		</div>
+
 		<form onsubmit="return false">
 			<label><p>Search for a country: &nbsp </p><input id ="country" type="text" onchange="changeCountry()" value="United States"> </label>
 		</form>
 	</div>
 
 	<hr/>
-	<div id="bubble_map"></div>
-	<div id="bar_chart"></div>
-	<div id="line_chart"></div>
+	<div id="bubble_map">asaw</div>
+	<div id="bar_chart">asasas</div>
+	<div id="line_chart">asax</div>
 	<div id="warpic" style="visibility:hidden"><img src="worldatwar.png"></div>
 	</div>
   </body>
