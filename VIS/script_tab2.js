@@ -471,7 +471,7 @@ function gen_bars() {
 							return 350 - d3.select(this).attr("width");
 						else return 360;
 	                   })
-		.attr("stroke-width",3).attr("stroke","black")
+		.attr("stroke-width",bar_stroke_thickness).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.NOC;})
 	    .on("mouseover", function(d){
 			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;
@@ -603,7 +603,7 @@ function gen_bubbles() {
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
-		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
+		.attr("stroke-width",1/zoom_multiplier).attr("stroke","white")
 		.attr("id",function(d) { return "bubble_"+d.NOC;})
 		.on("mouseover", function(d){
 			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals - "+d.country_name;

@@ -191,7 +191,7 @@ function gen_bars() {
                           return bar_stroke_thickness/2 +yscale(i);
 	                   })
 	    .attr("x",bar_shift_right+ bar_stroke_thickness/2)
-		.attr("stroke-width",3).attr("stroke","black")
+		.attr("stroke-width",bar_stroke_thickness).attr("stroke","black")
 		.attr("id",function(d) { return "bar_"+d.ioc_code;})
 	    .on("mouseover", function(d){
 			var ttlabel;
@@ -327,7 +327,7 @@ function gen_bubbles() {
 	    .attr("cx",function(d) {
                           return projection([d.longitude, d.latitude])[0];
 	                   })
-		.attr("stroke-width",3/zoom_multiplier).attr("stroke","black")
+		.attr("stroke-width",1/zoom_multiplier).attr("stroke","white")
 		.attr("id",function(d) { return "bubble_"+d.ioc_code;})
 	    .on("mouseover", function(d){
 			var ttlabel;

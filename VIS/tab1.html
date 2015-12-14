@@ -63,16 +63,16 @@
     		</div>
 
 		</div>
-
-		<form onsubmit="return false">
-			<label><p>Search for a country: &nbsp </p><input id ="country" type="text" onchange="changeCountry()" value="United States"> </label>
+		<p>Search for a country: &nbsp </p>
+		<form onsubmit="return false" class="yo">
+			<input id ="country" class="country" type="text" onchange="changeCountry()" value="United States">
 		</form>
 	</div>
 
 	<hr/>
-	<div id="bubble_map"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Distribution of the medals achieved across the world: (click on bubbles to select countries)<br><br></span></div>
-	<div id="bar_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Ranking of each country by medals won<br><br></span></div>
-	<div id="line_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Evolution of the country's medal count over editions of the games</span></div>
+	<div id="bubble_map"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Distribution of the medals achieved across the world (click on a bubble to select a country)<br><br></span></div>
+	<div id="bar_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Ranking of each country by medals won (click on a bar to select a country)<br><br></span></div>
+	<div id="line_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Evolution of the country's medal count over editions of the games (click on a bubble to change the year)<br><br></span></div>
 	<div id="warpic" style="visibility:hidden"><img src="worldatwar.png"></div>
 	</div>
   </body>

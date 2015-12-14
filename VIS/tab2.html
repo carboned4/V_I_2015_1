@@ -45,16 +45,18 @@
 		</div>
 
 		<p>Search for two countries: &nbsp </p>
-		<form onsubmit="return false">
-			<label> <input id ="country1" type="text"  onchange="changeCountryOne()" value="Russia"> </label>
-			<label> <input id ="country2" type="text"  onchange="changeCountryTwo()" value="China"> </label>
+		<form onsubmit="return false" class = "yo">
+			<input id ="country1" type="text"  onchange="changeCountryOne()" value="Russia"> 
+		</form>
+		<form onsubmit="return false" class = "yoo">
+		 <input id ="country2" type="text"  onchange="changeCountryTwo()" value="China"> 
 		</form>
 		<hr>
 	</div>
 	
-    <div id="bubble_map"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Distribution of the medals achieved across the world: (click on bubbles to select countries)<br><br></span></div>
-	<div id="bar_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Comparison of the countries by medals won in each sport<br><br></span></div>
-	<div id="line_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Evolution of the countries' medal count over editions of the games</span></div>
+    <div id="bubble_map"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Distribution of the medals achieved across the world (click on a bubble to select a country)<br><br></span></div>
+	<div id="bar_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Comparison of the countries by medals won in each sport (click on a bar to select a country)<br><br></span></div>
+	<div id="line_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Evolution of the countries' medal count over editions of the games (click on a bubble to change the year)<br><br></span></div>
 	<div id="warpic" style="visibility:hidden"><img src="worldatwar.png"></div>
 	</div>
   </body>

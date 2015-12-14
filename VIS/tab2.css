@@ -123,7 +123,6 @@ p{
 }
 
 #bubble_map{
-	background: #ddeeff;
 	width: 600px;
 	display: table-row;
 	float:left;
@@ -133,7 +132,7 @@ p{
 	border-left: 20px solid;
 	border-color: rgba(0, 0, 0, 0);
 	width: 600px;
-	height: 700px;
+	height: 800px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
@@ -168,13 +167,7 @@ margin-top:10px;
 #fieldinput{
 	width:100%;
 }
-#country2{
-background-color:#f0D0D0;
-}
 
-#country1{
-background-color:#D0F0D0;
-}
 
 button {
 background-color:white;
@@ -392,4 +385,103 @@ outline:none;
 
 .podium{
   margin-top: -50px;
+}
+
+input#country1[type="text"] {
+background: transparent -moz-linear-gradient(center top , #FAFAFA 0%, #E6E6E6 100%) repeat scroll 0% 0%;
+border-width: 0px 1px 1px 0px;
+border-style: none solid solid none;
+border-color: -moz-use-text-color rgba(255, 255, 255, 0.8) #FFF -moz-use-text-color;
+-moz-border-top-colors: none;
+-moz-border-right-colors: none;
+-moz-border-bottom-colors: none;
+-moz-border-left-colors: none;
+border-image: none;
+font-size: 16px;
+margin: 4px;
+padding: 5px;
+width: 250px;
+border-radius: 17px;
+box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.3), 0px 0px 1px rgba(0, 0, 0, 0.2);
+padding-left: 50px;
+}
+
+/*** USER IS FOCUSED ON TEXT BOX ***/
+input#country1[type="text"]:focus {
+  outline: none;
+  background: #fff; /* Fallback color for non-css3 browsers */
+  
+  /* Gradients */
+  background: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgb(255,255,255)), color-stop(1, rgb(235,235,235)));
+  background: -moz-linear-gradient( center top, rgb(255,255,255) 0%, rgb(235,235,235) 100%);
+}
+
+.yo{
+   background: #e1e1e1; /* Fallback color for non-css3 browsers */
+  width: 365px;
+  height:40px;
+  margin-top:3px;
+  /* Gradients */
+  background: -webkit-gradient( linear,left top, left bottom, color-stop(0, #3BE239), color-stop(1, #3E8200));
+  background: -moz-linear-gradient( center top, #3BE239 0%, #3E8200 100%);
+  
+  /* Rounded Corners */
+  border-radius: 17px; 
+  -webkit-border-radius: 17px;
+  -moz-border-radius: 17px;
+  
+  /* Shadows */
+  box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3); 
+  -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3);
+  -moz-box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3);
+}
+
+input#country2[type="text"] {
+background: transparent -moz-linear-gradient(center top , #FAFAFA 0%, #E6E6E6 100%) repeat scroll 0% 0%;
+border-width: 0px 1px 1px 0px;
+border-style: none solid solid none;
+border-color: -moz-use-text-color rgba(255, 255, 255, 0.8) #FFF -moz-use-text-color;
+-moz-border-top-colors: none;
+-moz-border-right-colors: none;
+-moz-border-bottom-colors: none;
+-moz-border-left-colors: none;
+border-image: none;
+font-size: 16px;
+margin: 4px;
+padding: 5px;
+width: 250px;
+border-radius: 17px;
+box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.3), 0px 0px 1px rgba(0, 0, 0, 0.2);
+padding-left: 50px;
+}
+
+/*** USER IS FOCUSED ON TEXT BOX ***/
+input#country2[type="text"]:focus {
+  outline: none;
+  background: #fff; /* Fallback color for non-css3 browsers */
+  
+  /* Gradients */
+  background: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgb(255,255,255)), color-stop(1, rgb(235,235,235)));
+  background: -moz-linear-gradient( center top, rgb(255,255,255) 0%, rgb(235,235,235) 100%);
+}
+
+.yoo{
+   background: #e1e1e1; /* Fallback color for non-css3 browsers */
+  width: 365px;
+  height:40px;
+  margin-top:-55px;
+  margin-left:400px;
+  /* Gradients */
+  background: -webkit-gradient( linear,left top, left bottom, color-stop(0, #E45F5F), color-stop(1, #A24444));
+  background: -moz-linear-gradient( center top, #E45F5F 0%, #A24444 100%);
+  
+  /* Rounded Corners */
+  border-radius: 17px; 
+  -webkit-border-radius: 17px;
+  -moz-border-radius: 17px;
+  
+  /* Shadows */
+  box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3); 
+  -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3);
+  -moz-box-shadow: 1px 1px 2px rgba(0,0,0,.3), 0 0 2px rgba(0,0,0,.3);
 }
