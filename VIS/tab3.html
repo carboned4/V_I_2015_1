@@ -22,12 +22,11 @@
 	<div id="fieldinput">
 		
 		<div id="divfor2slider">
-			<form>
+			<form style="margin-bottom: 0px;height: 60px;">
 				<span>Year:</span>
 				<span id="yearelementtowrite" ></span><br>
 				<input type="range" onchange="changeYear()" oninput="updateYearLabel()" name="points" id="singleyearslider" min="0" max="12">
-				<span id="magicianCode" >  <button type="button" onclick="startAnim()" id ="yo" class="play"></button>
-																</span>
+				<span id="magicianCode" >  <button type="button" onclick="startAnim()" id ="yo" class="play"></button></span>
 				
 			</form>
 		</div>
@@ -37,9 +36,9 @@
 		</form>
 	</div>
 	<hr/>
-	<div id="bubble_map"></div>
-	<div id="bar_chart"></div>
-	<div id="line_chart"></div>
+	<div id="bubble_map"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Distribution of the coefficient across the world: (click on bubbles to select countries)<br><br></span></div>
+	<div id="bar_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Ranking of each country by coefficient<br><br></span></div>
+	<div id="line_chart"><span style="background-color:#ffffff;font-family: calibri, sans serif;">Evolution of the country's coefficient over editions of the games</span></div>
   </body>
 
 </html>

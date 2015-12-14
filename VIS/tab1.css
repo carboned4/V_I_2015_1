@@ -68,8 +68,8 @@ li {
 	position: absolute;
 	z-index: 10;
 	width: 300px;
-	left: 150px;
-	top:440px;
+	left: 130px;
+    top: 350px;
 }
 
 a{
@@ -109,7 +109,7 @@ path {
 
 text{
    font-family: calibri, sans serif;
-   
+   font-size: 14;
 }
 
 p{
@@ -144,7 +144,7 @@ p{
 	display: table-row;
     float: left;
 	position: absolute;
-	top: 640px;
+	top: 580px;
 }
 
 #sportschoices{

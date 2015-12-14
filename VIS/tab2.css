@@ -71,8 +71,8 @@ a{
 	position: absolute;
 	z-index: 10;
 	width: 300px;
-	left: 150px;
-	top:440px;
+	left: 130px;
+    top: 390px;
 }
 
 hr{
@@ -143,7 +143,7 @@ p{
 	display: table-row;
     float: left;
 	position: absolute;
-	top: 600px;
+	top: 620px;
 }
 
 #sportschoices{

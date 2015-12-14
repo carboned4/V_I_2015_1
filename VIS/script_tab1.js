@@ -224,6 +224,7 @@ $(function() {
   });
 
 function startupscript(){
+	document.getElementsByClassName("main-content")[0].style.width=window.innerWidth-125;
 	document.getElementsByClassName("main-content")[0].style.height=window.innerHeight-43;
 	fixDoubleSlider();
 	createSportsDropdown();
