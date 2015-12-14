@@ -82,6 +82,7 @@ function changeYear(){
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	changeCountry();
 }
 
 
@@ -480,7 +481,13 @@ function gen_line() {
 			.attr("ioc", lel.ioc_code)
 			.attr("coef", lel["y"+yearp])
 			.attr("cy",yscale(lel ? lel["y"+yearp] : 0))
-			.attr("r",5).style("fill","red")
+			.attr("r",5).style("stroke-width",function(){if(yearp==year)
+										return "0";
+										else return "2";
+								}).style("stroke","red")
+	.style("fill",function(){if(yearp==year)
+										return "red";
+										else return "white";})
 			.on("click", goToYear)
 			.on("mouseover", OverLineTooltip)/*{
 				var ttlabel;

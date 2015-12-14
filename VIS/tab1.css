@@ -303,3 +303,8 @@ body {
 	margin:0;
 	padding: 0;
 }
+
+
+.hello[type=checkbox] {
+  -webkit-transform: scale(2.5);
+}

@@ -102,6 +102,7 @@ function changeYear(){
 	shown_dataset = process_data(full_dataset);
 	gen_bars();
 	gen_bubbles();
+	gen_line();
 }
 
 
@@ -161,6 +162,7 @@ $(function() {
 		shown_dataset = process_data(full_dataset);
 		gen_bars();
 		gen_bubbles();
+		gen_line();
       }
     });
     $( "#amount" ).val(($( "#slider-range" ).slider( "values", 0 )*4+1896) +
@@ -731,7 +733,13 @@ function gen_line() {
 							  return  yscale(d[selectedMedals]);
 						   })
 		.attr("r",5)
-		.style("fill","green")
+			.style("stroke-width",function(d){if(d.Edition>=year_min && d.Edition <= year_max)
+										return "0";
+										else return "2";
+								}).style("stroke","green")
+	.style("fill",function(d){if(d.Edition>=year_min && d.Edition <= year_max)
+										return "green";
+										else return "white";})
 		.on("click", function (d) {goToYear(d.Edition)})
 		.on("mouseover", function(d){
 			var ttlabel = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
@@ -764,7 +772,13 @@ function gen_line() {
 								  return  yscale(d[selectedMedals]);
 							   })
 			.attr("r",5)
-			.style("fill","red")
+				.style("stroke-width",function(d){if(d.Edition>=year_min && d.Edition <= year_max)
+										return "0";
+										else return "2";
+								}).style("stroke","red")
+	.style("fill",function(d){if(d.Edition>=year_min && d.Edition <= year_max)
+										return "red";
+										else return "white";})
 			.on("click", function (d) {goToYear(d.Edition)})
 			.on("mouseover", function(d){
 					var ttlabel2 = d.NOC + " - " + d[selectedMedals] + " medals" + " in " + d.Edition;
